@@ -48,7 +48,7 @@ exports.login = catchAsync(async (req, res, next) =>
 
 })
 
-exports.signup = catchAsync(async (req, res, next) =>
+exports.signup = catchAsync(async (req, res,) =>
 {
     const connection = database.getConnection();
 

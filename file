@@ -1,0 +1,510 @@
+-- phpMyAdmin SQL Dump
+-- version 4.9.7
+-- https://www.phpmyadmin.net/
+--
+-- Host: localhost:3306
+-- Generation Time: Jun 05, 2023 at 07:46 PM
+-- Server version: 5.7.42
+-- PHP Version: 7.4.30
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Database: `snapt3_zona`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `appointment`
+--
+CREATE TABLE `appointment` (
+  `id` int(11) NOT NULL,
+  `event-id` int(11) NOT NULL,
+  `customer-id` int(11) NOT NULL,
+  `timeslot` varchar(30) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+--
+-- Dumping data for table `appointment`
+--
+
+INSERT INTO `appointment` (`id`, `event-id`, `customer-id`, `timeslot`) VALUES
+(1, 1, 1, '11:00 a.m.');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `availability`
+--
+
+CREATE TABLE `availability` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `event_id` int(11) UNSIGNED NOT NULL,
+  `timeslot` varchar(20) NOT NULL,
+  `seats` tinyint(2) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `availability`
+--
+
+INSERT INTO `availability` (`id`, `event_id`, `timeslot`, `seats`) VALUES
+(1, 1, '11:00 a.m.', 3);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `customer`
+--
+
+CREATE TABLE `customer` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `territory_id` int(11) UNSIGNED NOT NULL,
+  `name-first` varchar(30) NOT NULL,
+  `name-last` varchar(30) NOT NULL,
+  `email` varchar(30) NOT NULL,
+  `phone` varchar(30) NOT NULL,
+  `notes` text,
+  `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `edit-id` int(11) UNSIGNED DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `customer`
+--
+
+INSERT INTO `customer` (`id`, `territory_id`, `name-first`, `name-last`, `email`, `phone`, `notes`, `updated`, `edit-id`) VALUES
+(1, 100, 'Paul', 'Test', 'paul@paul.com', '801 098 0987', NULL, '2023-06-06 02:29:42', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `event`
+--
+
+CREATE TABLE `event` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `territory_id` int(11) UNSIGNED NOT NULL,
+  `etype` varchar(20) NOT NULL,
+  `edate` date NOT NULL,
+  `capacity` tinyint(4) NOT NULL DEFAULT '4',
+  `time-start` varchar(15) NOT NULL,
+  `time-end` varchar(15) NOT NULL,
+  `city` varchar(30) NOT NULL,
+  `street1` varchar(50) NOT NULL,
+  `street2` varchar(50) DEFAULT NULL,
+  `street3` varchar(50) DEFAULT NULL,
+  `attendees` tinyint(3) UNSIGNED NOT NULL,
+  `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `edit_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `event`
+--
+
+INSERT INTO `event` (`id`, `territory_id`, `etype`, `edate`, `capacity`, `time-start`, `time-end`, `city`, `street1`, `street2`, `street3`, `attendees`, `updated`, `edit_id`) VALUES
+(1, 100, 'Law', '2023-06-17', 4, '10:00 a.m.', '2:00 p.m.', 'Orem', 'Keller Williams Office ', '998 North 1200 West', NULL, 3, '2023-06-06 02:22:39', 0),
+(2, 100, 'Law', '2023-06-24', 4, '10:00 a.m.', '2:00 p.m.', 'Orem', 'Keller Williams Office ', '998 North 1200 West', NULL, 0, '2023-06-06 02:24:14', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `payment`
+--
+
+CREATE TABLE `payment` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `event-id` int(11) UNSIGNED NOT NULL,
+  `customer_id` int(11) NOT NULL,
+  `sponsor_id` int(11) NOT NULL,
+  `amount-due` decimal(8,2) NOT NULL,
+  `status` varchar(20) NOT NULL COMMENT 'Pending, Completed',
+  `payment-id` varchar(100) NOT NULL,
+  `token` varchar(100) NOT NULL,
+  `paypal_response_data` text NOT NULL,
+  `amount-received` decimal(8,2) NOT NULL,
+  `paypal_payment_status` int(11) NOT NULL,
+  `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `promotion`
+--
+
+CREATE TABLE `promotion` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `territory-id` int(11) UNSIGNED NOT NULL,
+  `ptype` varchar(20) NOT NULL,
+  `p-url` varchar(30) NOT NULL,
+  `event1-id` int(11) UNSIGNED NOT NULL,
+  `event2-id` int(11) UNSIGNED DEFAULT NULL,
+  `event3-id` int(11) UNSIGNED DEFAULT NULL,
+  `event4-id` int(11) UNSIGNED DEFAULT NULL,
+  `attendees` int(11) UNSIGNED DEFAULT NULL,
+  `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `edit-id` int(11) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `promotion`
+--
+
+INSERT INTO `promotion` (`id`, `territory-id`, `ptype`, `p-url`, `event1-id`, `event2-id`, `event3-id`, `event4-id`, `attendees`, `updated`, `edit-id`) VALUES
+(1, 100, 'Law', 'https://ProBonoZone.com?id=1', 1, 2, NULL, NULL, NULL, '2023-06-06 02:27:48', 0),
+(2, 100, 'Law', 'https://ProBonoZone.com?id=2', 1, 2, NULL, NULL, NULL, '2023-06-06 02:27:57', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `promotion-sponsor`
+--
+
+CREATE TABLE `promotion-sponsor` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `promotion-id` int(11) UNSIGNED NOT NULL,
+  `sponsor-id` int(11) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `promotion-sponsor`
+--
+
+INSERT INTO `promotion-sponsor` (`id`, `promotion-id`, `sponsor-id`) VALUES
+(1, 1, 1),
+(2, 1, 2);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `resource`
+--
+
+CREATE TABLE `resource` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `category` varchar(20) NOT NULL,
+  `title` varchar(100) NOT NULL,
+  `viewers` varchar(20) NOT NULL,
+  `type` varchar(20) NOT NULL,
+  `filepath` varchar(100) NOT NULL,
+  `status` varchar(20) NOT NULL DEFAULT 'pending',
+  `edit-id` int(11) NOT NULL,
+  `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `resource`
+--
+
+INSERT INTO `resource` (`id`, `category`, `title`, `viewers`, `type`, `filepath`, `status`, `edit-id`, `updated`) VALUES
+(1, 'Marketing', '20 Ways to Leverage Facebook', 'lIcensees', 'link', 'http://google.com', 'Pending', 0, '2023-06-06 01:04:28'),
+(2, 'Training', 'Setting Up Your System', 'licensees', 'file', 'setup.pdf', 'live', 0, '2023-06-06 01:05:17');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `sponsor`
+--
+
+CREATE TABLE `sponsor` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `territory_id` int(11) UNSIGNED NOT NULL,
+  `scategory` varchar(20) NOT NULL COMMENT 'Consultant, Advocate',
+  `stype` varchar(20) NOT NULL,
+  `organization-name` varchar(50) NOT NULL,
+  `webpage` varchar(100) NOT NULL,
+  `logo` varchar(100) NOT NULL,
+  `description` text NOT NULL,
+  `contact-name` varchar(100) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `phone` varchar(30) NOT NULL,
+  `notes` text NOT NULL,
+  `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `edit-id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `sponsor`
+--
+
+INSERT INTO `sponsor` (`id`, `territory_id`, `scategory`, `stype`, `organization-name`, `webpage`, `logo`, `description`, `contact-name`, `email`, `phone`, `notes`, `updated`, `edit-id`) VALUES
+(1, 100, 'Consultant', 'Law', 'Smith & Jones', 'https://google.com', '', 'This is our description. E;iernce Pro bono hours. Specilaty. etc, ', 'Harry Smith', 'harry@gmail.com', '801 890 9898', 'Harry is a golfer.', '2023-06-06 01:25:03', 0),
+(2, 100, 'Promoter', 'Government', 'Provo City', 'https://Provo.org', '', 'This is a description of the promoter.', 'Mayor Loofassa', 'mayor@gmail.com', '800 345 5678', '', '2023-06-06 01:24:49', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `staff`
+--
+
+CREATE TABLE `staff` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `territory-id` int(11) UNSIGNED NOT NULL,
+  `user-id` int(11) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `staff`
+--
+
+INSERT INTO `staff` (`id`, `territory-id`, `user-id`) VALUES
+(1, 100, 6),
+(2, 100, 7),
+(3, 100, 8),
+(4, 100, 9);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `states`
+--
+
+CREATE TABLE `states` (
+  `id` int(11) NOT NULL,
+  `name` varchar(20) NOT NULL,
+  `abbrev` char(2) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `states`
+--
+
+INSERT INTO `states` (`id`, `name`, `abbrev`) VALUES
+(1, 'Alaska', 'AK'),
+(2, 'Alabama', 'AL'),
+(3, 'Arizona', 'AZ'),
+(4, 'Arkansas', 'AR'),
+(5, 'California', 'CA'),
+(6, 'Colorado', 'CO'),
+(7, 'Connecticut', 'CT'),
+(8, 'Delaware', 'DE'),
+(9, 'DC', 'DC'),
+(10, 'Florida', 'FL'),
+(11, 'Georgia', 'GA'),
+(12, 'Hawaii', 'HI'),
+(13, 'Idaho', 'ID'),
+(14, 'Illinois', 'IL'),
+(15, 'Indiana', 'IN'),
+(16, 'Iowa', 'IA'),
+(17, 'Kansas', 'KS'),
+(18, 'Kentucky', 'KY'),
+(19, 'Louisiana', 'LA'),
+(20, 'Maine', 'ME'),
+(21, 'Maryland', 'MD'),
+(22, 'Massachusetts', 'MA'),
+(23, 'Michigan', 'MI'),
+(24, 'Minnesota', 'MN'),
+(25, 'Mississippi', 'MS'),
+(26, 'Missouri', 'MO'),
+(27, 'Montana', 'MT'),
+(28, 'Nebraska', 'NE'),
+(29, 'Nevada', 'NV'),
+(30, 'New Hampshire', 'NH'),
+(31, 'New Jersey', 'NJ'),
+(32, 'New Mexico', 'NM'),
+(33, 'New York', 'NY'),
+(34, 'North Carolina', 'NC'),
+(35, 'North Dakota', 'ND'),
+(36, 'Ohio', 'OH'),
+(37, 'Oklahoma', 'OK'),
+(38, 'Oregon', 'OR'),
+(39, 'Pennsylvania', 'PA'),
+(40, 'Rhode Island', 'RI'),
+(41, 'South Carolina', 'SC'),
+(42, 'South Dakota', 'SD'),
+(43, 'Tennessee', 'TN'),
+(44, 'Texas', 'TX'),
+(45, 'Utah', 'UT'),
+(46, 'Vermont', 'VT'),
+(47, 'Virginia', 'VA'),
+(48, 'Washington', 'WA'),
+(49, 'West Virginia', 'WV'),
+(50, 'Wisconsin', 'WI'),
+(51, 'Wyoming', 'WY');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `territory`
+--
+
+CREATE TABLE `territory` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `licensee-id` int(11) UNSIGNED NOT NULL,
+  `country` varchar(30) NOT NULL DEFAULT 'USA',
+  `state` varchar(20) NOT NULL,
+  `county` varchar(30) NOT NULL,
+  `default-url` varchar(50) NOT NULL,
+  `notes` text NOT NULL,
+  `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `edit-id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `territory`
+--
+
+INSERT INTO `territory` (`id`, `licensee-id`, `country`, `state`, `county`, `default-url`, `notes`, `updated`, `edit-id`) VALUES
+(100, 3, 'USA', 'Utah', 'Utah', 'https://uc.ProBonoZone.com', 'These are notes.', '2023-06-06 00:33:30', 0),
+(101, 4, 'USA', 'Nevada', 'Clark', 'https://vegas.ProBonoZone.com', '', '2023-06-06 00:34:54', 0),
+(102, 5, 'USA', 'Arizona', 'Maricopa', 'https://phoenix.ProBonoZone.com', '', '2023-06-06 00:38:34', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user`
+--
+
+CREATE TABLE `user` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `permit` varchar(20) NOT NULL,
+  `name-first` varchar(30) NOT NULL,
+  `name-last` varchar(30) NOT NULL,
+  `phone` varchar(30) NOT NULL,
+  `email` varchar(30) NOT NULL,
+  `pass` varchar(30) NOT NULL,
+  `notes` text,
+  `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `edit-id` int(11) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `user`
+--
+
+INSERT INTO `user` (`id`, `permit`, `name-first`, `name-last`, `phone`, `email`, `pass`, `notes`, `updated`, `edit-id`) VALUES
+(1, 'admin', 'Kevin', 'Cannon', '8018001234', 'kevin@kevin.com', '123456', 'These re notes.', '2023-06-06 00:29:56', 0),
+(2, 'admin', 'Paul', 'O\'Connor', '8018009999', 'irishskimaniac@gmail.com', '123456', 'Notes here.', '2023-06-06 00:29:56', 0),
+(3, 'licensee', 'Kevin', 'Cannon', '8018887777', 'kevin@gmail.com', '123456', 'This user a licensee, and has access to a Territory. ', '2023-06-06 00:32:57', 0),
+(4, 'licensee', 'Paul', 'O\'Connor', '8019687070', 'paul@gmail.com', '123456', 'This user is a licensee.', '2023-06-06 00:32:57', 0),
+(5, 'licensee', 'Jack', 'Smith', '4355677689', 'jack@gmail.com', '123456', NULL, '2023-06-06 00:36:03', 0),
+(6, 'staff', 'Joe', 'Staff', '4354654645', 'joe@gmail.com', '123456', 'Joe is a Staff memberem,ebr of Territory 100', '2023-06-06 00:45:35', 0),
+(7, 'staff', 'Mary', 'Jones', '8905671234', 'mary@gmail.com', '123456', 'Mary is staff member of Territory 100, Utah County', '2023-06-06 00:45:55', 0),
+(8, 'staff', 'Susan', 'Smith', '8012346476', 'susan@gmail.com', '123456', 'Susan is a Staff memrber of Territorty 100, Utah Counnty.', '2023-06-06 00:47:07', 0);
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `appointment`
+--
+
+
+-- Indexes for table `user`
+--
+ALTER TABLE `user`
+  ADD UNIQUE KEY `email` (`email`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `appointment`
+--
+ALTER TABLE `appointment`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `availability`
+--
+ALTER TABLE `availability`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `customer`
+--
+ALTER TABLE `customer`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `event`
+--
+ALTER TABLE `event`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `payment`
+--
+ALTER TABLE `payment`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `promotion`
+--
+ALTER TABLE `promotion`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `promotion-sponsor`
+--
+ALTER TABLE `promotion-sponsor`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `resource`
+--
+ALTER TABLE `resource`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `sponsor`
+--
+ALTER TABLE `sponsor`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `staff`
+--
+ALTER TABLE `staff`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `states`
+--
+ALTER TABLE `states`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
+
+--
+-- AUTO_INCREMENT for table `territory`
+--
+ALTER TABLE `territory`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=103;
+
+--
+-- AUTO_INCREMENT for table `user`
+--
+ALTER TABLE `user`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

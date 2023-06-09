@@ -5,7 +5,7 @@ const morgan = require('morgan');
 const cors = require("cors");
 const database = require('./sqlconnect');
 
-// const appointment = require("./routes/appointment");
+const appointment = require("./routes/appointment");
 // const availability = require("./routes/availability");
 // const customer = require("./routes/customer");
 // const event = require("./routes/event");
@@ -26,7 +26,7 @@ app.use(morgan("dev"));
 app.use(cors());
 app.use(express.json());
 
-// app.use("/appointment", appointment);
+app.use("/appointment", appointment);
 // app.use("/availability", availability);
 // app.use("/customer", customer);
 // app.use("/event", event);
@@ -39,6 +39,7 @@ app.use("/resource", resource);
 app.use("/territory", territory);
 app.use("/sponsor", sponsor);
 app.use("/user", user);
+
 
 
 app.get("/global/states", (req, res) =>

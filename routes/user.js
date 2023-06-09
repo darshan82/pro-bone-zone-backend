@@ -18,6 +18,8 @@ router.post('/signup',
         check('phone').notEmpty().withMessage('Phone number is required'),
         check('email').isEmail().withMessage('Invalid email'),
         check('pass').notEmpty().withMessage('Password is required'),
+        check('territoryId').notEmpty().withMessage('territory-id is required'),
+        check('licenseeId').notEmpty().withMessage('licensee-id is required'),
     ]
     , controller.signup);
 

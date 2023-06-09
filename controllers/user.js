@@ -58,7 +58,8 @@ exports.signup = catchAsync(async (req, res,) =>
         phone,
         email,
         pass,
-        notes
+        notes,
+        territoryId
     } = req.body;
     // Query the database to check if the user already exists
     connection.query('SELECT * FROM user WHERE email = ?', [email], (error, rows) =>
@@ -85,6 +86,18 @@ exports.signup = catchAsync(async (req, res,) =>
             console.log("rows", rows)
 
             const token = jwt.sign({ email, permit }, config.jwt_secret);
+
+            // if (permit === "staff")
+            // {
+            //     connection.query('INSERT INTO staff (`territory-id`, `user-id`) VALUES (?, ?)', [
+            //         territoryId,
+            //         nameFirst,
+            //     ])
+            // }
+            // if (permit === "licensee")
+            // {
+
+            // }
             res.status(200).json({ token, ...req.body, message: "Signup successfully" });
         })
 

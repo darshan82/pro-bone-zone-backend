@@ -15,7 +15,7 @@ exports.login = catchAsync(async (req, res, next) =>
 
     const connection = database.getConnection();
 
-    const { email, password, permit } = req.body;
+    const { email, password,  } = req.body;
 
     try
     {
@@ -29,7 +29,7 @@ exports.login = catchAsync(async (req, res, next) =>
                 const user = rows[0];
 
                 // Create a JWT with user data
-                const token = jwt.sign({ email: user.email, permit: user.permit }, config.jwt_secret);
+                const token = jwt.sign({ email: user.email, permit: user.permit, id: user.id }, config.jwt_secret);
 
                 // Return the JWT as a response
                 res.json({ token, user });
@@ -43,7 +43,7 @@ exports.login = catchAsync(async (req, res, next) =>
     } catch (error)
     {
         console.error('Error occurred while logging in:', error);
-        res.status(500).json({ message: 'Internal server error' });
+        res.status(500).json({ message: `Internal server error ${String(error)}` });
     }
 
 })

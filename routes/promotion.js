@@ -14,5 +14,7 @@ router.post('/add',
         check('event1Id').notEmpty().withMessage('Event 1 ID is required'),
     ]
     , controller.addPromotion)
+
+router.get('/detail/:promotionId', controller.getPromotionById)
 module.exports = router;
 

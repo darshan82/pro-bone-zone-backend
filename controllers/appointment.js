@@ -10,47 +10,79 @@ exports.addAppointments = catchAsync(async (req, res, next) =>
         return res.status(400).json({ errors: errors.array() });
     }
 
-    const { eventId, customerId, timeslot, interest, companyId, consultant, rating, feedback, advance, editId } = req.body;
-    const values = [eventId, customerId, timeslot, interest, companyId, consultant, rating, feedback, advance, editId];
+    const {
+        date,
+        firstName,
+        lastName,
+        email,
+        phone,
+        type,
+        time,
+        description,
+        promotionId,
+        eventId,
+        // Add any other necessary fields here
+    } = req.body;
+
     const connection = database.getConnection();
-    const sql = 'INSERT INTO appointment (`event-id`, `customer-id`, `timeslot`, `interest`, `company-id`, `consultant`, `rating`, `feedback`, `advance`, `edit-id`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-    connection.query(sql, values, (error, results) =>
+
+    // Step 1: Insert data into the customer table
+    const customerValues = [firstName, lastName, email, phone, 100, description];
+    const customerSql =
+        'INSERT INTO customer (`name-first`, `name-last`, `email`, `phone`,`territory_id`,`notes`) VALUES (?, ?, ?, ?,?,?)';
+
+    connection.query(customerSql, customerValues, (error, customerResult) =>
     {
         if (error)
         {
-            console.error('Error inserting data into appointment table:', error);
-            return res.status(500).json({ error: 'Internal server error' });
+            console.error('Error inserting data into customer table:', error);
+            return res.status(500).json({ error: 'Internal server error' + error });
         }
 
-        // Return success response
-        return res.status(200).json({ message: 'Data inserted successfully' });
-    });
-});
-exports.updateAppointment = catchAsync(async (req, res, next) =>
-{
-    const errors = validationResult(req);
-    if (!errors.isEmpty())
-    {
-        return res.status(400).json({ errors: errors.array() });
-    }
+        const customerId = customerResult.insertId;
 
-    const appointmentId = req.query.id;
-    const { eventId, customerId, timeslot, interest, companyId, consultant, rating, feedback, advance, editId } = req.body;
-    const values = [eventId, customerId, timeslot, interest, companyId, consultant, rating, feedback, advance, editId, appointmentId];
-    const connection = database.getConnection();
-    const sql = 'UPDATE appointment SET `event-id` = ?, `customer-id` = ?, `timeslot` = ?, `interest` = ?, `company-id` = ?, `consultant` = ?, `rating` = ?, `feedback` = ?, `advance` = ?, `edit-id` = ? WHERE `id` = ?';
-    connection.query(sql, values, (error, results) =>
-    {
-        if (error)
+        // Step 2: Insert data into the appointment table
+        const appointmentValues = [eventId, customerId, time];
+        const appointmentSql =
+            'INSERT INTO appointment (`event-id`, `customer-id`, `timeslot`) VALUES (?, ?, ?)';
+
+        connection.query(appointmentSql, appointmentValues, (error, appointmentResult) =>
         {
-            console.error('Error updating data in appointment table:', error);
-            return res.status(500).json({ error: 'Internal server error' });
-        }
+            if (error)
+            {
+                console.error('Error inserting data into appointment table:', error);
+                return res.status(500).json({ error: 'Internal server error' });
+            }
 
-        // Return success response
-        return res.status(200).json({ message: 'Data updated successfully' });
+            // Step 3: Update attendees in the promotion table
+            const updatePromotionSql = 'UPDATE promotion SET attendees = attendees + 1 WHERE id = ?';
+            connection.query(updatePromotionSql, [promotionId], (error) =>
+            {
+                if (error)
+                {
+                    console.error('Error updating attendees in the promotion table:', error);
+                    return res.status(500).json({ error: 'Internal server error' });
+                }
+
+                // Step 4: Update attendees in the event table
+                const updateEventSql = 'UPDATE event SET attendees = attendees + 1 WHERE id = ?';
+                connection.query(updateEventSql, [eventId], (error) =>
+                {
+                    if (error)
+                    {
+                        console.error('Error updating attendees in the event table:', error);
+                        return res.status(500).json({ error: 'Internal server error' });
+                    }
+
+                    // Return success response
+                    return res.status(200).json({ message: 'Data inserted successfully' });
+                });
+            });
+        });
     });
 });
+
+
 exports.deleteAppointment = catchAsync(async (req, res, next) =>
 {
     const appointmentId = req.params.id;

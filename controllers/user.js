@@ -24,7 +24,7 @@ exports.login = catchAsync(async (req, res, next) =>
             // Query the database to check if user exists
 
             // Check if a matching user is found
-            if (rows.length === 1)
+            if (rows && rows.length === 1)
             {
                 const user = rows[0];
 
@@ -65,7 +65,7 @@ exports.signup = catchAsync(async (req, res,) =>
     connection.query('SELECT * FROM user WHERE email = ?', [email], (error, rows) =>
     {
         // Check if the user already exists
-        if (rows.length > 0)
+        if (rows && rows.length > 0)
         {
             return res.status(400).json({ message: 'User already exists' });
         }

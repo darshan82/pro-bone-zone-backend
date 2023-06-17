@@ -1,12 +1,15 @@
 const express = require('express');
 const controller = require("../controllers/appointment")
 
-const { check, body, param } = require("express-validator");
+const { check, body, param, query } = require("express-validator");
 
 const router = express.Router();
 
 
-router.get('/', controller.getAllAppointments);
+router.get('/', [
+    query('eventId').notEmpty().isInt().withMessage('Invalid event ID')
+  ], controller.getAppointmentsByEventId);
+
 router.post('/add',
     [
         body('date'),

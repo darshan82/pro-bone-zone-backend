@@ -100,19 +100,36 @@ exports.deleteAppointment = catchAsync(async (req, res, next) =>
         return res.status(200).json({ message: 'Data deleted successfully' });
     });
 });
-exports.getAllAppointments = catchAsync(async (req, res, next) =>
-{
-    const connection = database.getConnection();
-    const sql = 'SELECT * FROM appointment';
-    connection.query(sql, (error, results) =>
-    {
-        if (error)
-        {
-            console.error('Error retrieving data from appointment table:', error);
-            return res.status(500).json({ error: 'Internal server error' });
-        }
 
-        // Return the retrieved appointments
+exports.getAppointmentsByEventId = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+  
+    const { eventId } = req.query;
+  
+    try {
+      const connection = database.getConnection();
+  
+      const sql = `
+        SELECT a.*, e.*, c.*
+        FROM appointment AS a
+        INNER JOIN event AS e ON a.\`event-id\` = e.id
+        INNER JOIN customer AS c ON a.\`customer-id\` = c.id
+        WHERE a.\`event-id\` = ?
+      `;
+  
+      connection.query(sql, [eventId], (error, results) => {
+        if (error) {
+          console.error('Error retrieving data:', error);
+          return res.status(500).json({ error: 'Internal server error' });
+        }
+  
         return res.status(200).json({ appointments: results });
-    });
-});
+      });
+    } catch (error) {
+      console.error('Error connecting to the database:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  };

@@ -4,7 +4,8 @@ const config = require("./config");
 const database = require('./sqlconnect');
 
 
-app.listen(config.PORT, (err,res) =>
+console.log("process.env.PORT", process.env.PORT)
+app.listen(process.env.PORT || 3000, (err, res) =>
 {
   console.log('server start');
 });

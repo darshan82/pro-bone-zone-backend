@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.get('/', [
     query('eventId').notEmpty().isInt().withMessage('Invalid event ID')
-  ], controller.getAppointmentsByEventId);
+], controller.getAppointmentsByEventId);
 
 router.post('/add',
     [
@@ -32,7 +32,14 @@ router.delete('/delete/:id', [
 ], controller.deleteAppointment);
 
 
-
+router.put('/:id/:customerId',
+    [
+        body('firstName').notEmpty().withMessage('First name is required'),
+        param('customerId').notEmpty().withMessage('customerId is params'),
+        param('id').notEmpty().withMessage('id is required in params'),
+        body('lastName').notEmpty().withMessage('Last name is required'),
+        body('timeslot').notEmpty().withMessage('Timeslot is required'),
+    ], controller.updateAppointement)
 
 
 module.exports = router;

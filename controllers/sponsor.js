@@ -1,10 +1,12 @@
 const { validationResult } = require('express-validator');
 const database = require('../sqlconnect');
 
-exports.addSponsor = (req, res) => {
+exports.addSponsor = (req, res) =>
+{
   // Validate request body
   const errors = validationResult(req);
-  if (!errors.isEmpty()) {
+  if (!errors.isEmpty())
+  {
     return res.status(400).json({ errors: errors.array() });
   }
 
@@ -44,8 +46,10 @@ exports.addSponsor = (req, res) => {
 
   // Execute the query
   const connection = database.getConnection(); // Assuming you have a method to get the database connection
-  connection.query(sql, values, (error, results) => {
-    if (error) {
+  connection.query(sql, values, (error, results) =>
+  {
+    if (error)
+    {
       console.error('Error inserting data into sponsor table:', error);
       return res.status(500).json({ error: 'Internal server error' });
     }
@@ -53,4 +57,41 @@ exports.addSponsor = (req, res) => {
     // Return success response
     return res.status(200).json({ message: 'Data inserted successfully' });
   });
+};
+
+
+exports.getSponsorsBasedOnTerritoryId = async (req, res) =>
+{
+  try
+  {
+    // Check for validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+    {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const territoryId = req.params.territoryId;
+    const connection = database.getConnection(); // Assuming you have a method to get the database connection
+
+    // Fetch sponsors based on territory_id
+    connection.query(
+      'SELECT * FROM sponsor WHERE territory_id = ?',
+      [territoryId],
+      (error, results) =>
+      {
+        if (error)
+        {
+          console.error('Error executing query:', error);
+          return res.status(500).json({ error: 'Error executing query' });
+        }
+
+        res.json({ sponsors: results });
+      }
+    );
+  } catch (error)
+  {
+    console.error('Error executing query:', error);
+    res.status(500).json({ error: 'Error executing query' });
+  }
 };

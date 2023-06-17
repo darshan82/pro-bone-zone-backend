@@ -101,35 +101,114 @@ exports.deleteAppointment = catchAsync(async (req, res, next) =>
     });
 });
 
-exports.getAppointmentsByEventId = async (req, res) => {
+exports.getAppointmentsByEventId = async (req, res) =>
+{
     const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+    if (!errors.isEmpty())
+    {
+        return res.status(400).json({ errors: errors.array() });
     }
-  
+
     const { eventId } = req.query;
-  
-    try {
-      const connection = database.getConnection();
-  
-      const sql = `
-        SELECT a.*, e.*, c.*
+
+    try
+    {
+        const connection = database.getConnection();
+
+        const sql = `
+        SELECT a.*, e.*, c.*, GROUP_CONCAT(av.timeslot) AS timeslots
         FROM appointment AS a
         INNER JOIN event AS e ON a.\`event-id\` = e.id
         INNER JOIN customer AS c ON a.\`customer-id\` = c.id
+        INNER JOIN availability AS av ON e.id = av.event_id
         WHERE a.\`event-id\` = ?
+        GROUP BY a.id
       `;
-  
-      connection.query(sql, [eventId], (error, results) => {
-        if (error) {
-          console.error('Error retrieving data:', error);
-          return res.status(500).json({ error: 'Internal server error' });
-        }
-  
-        return res.status(200).json({ appointments: results });
-      });
-    } catch (error) {
-      console.error('Error connecting to the database:', error);
-      return res.status(500).json({ error: 'Internal server error' });
+
+        connection.query(sql, [eventId], (error, results) =>
+        {
+            if (error)
+            {
+                console.error('Error retrieving data:', error);
+                return res.status(500).json({ error: 'Internal server error' });
+            }
+
+            // Transform the results to include timeslots as an array in each appointment
+            const appointments = results.map((result) =>
+            {
+                const { timeslots, ...appointmentData } = result;
+                const timeslotArray = timeslots.split(',');
+                return { ...appointmentData, timeslots: timeslotArray };
+            });
+
+            return res.status(200).json({ appointments });
+        });
+    } catch (error)
+    {
+        console.error('Error connecting to the database:', error);
+        return res.status(500).json({ error: 'Internal server error' });
     }
-  };
+};
+
+
+
+// Define the API endpoint for updating the appointment
+exports.updateAppointement = async (req, res) =>
+{
+    const appointmentId = req.params.id;
+    const customerId = req.params.customerId;
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+    {
+        return res.status(400).json({ errors: errors.array() });
+    }
+    
+    const {
+        firstName,
+        lastName,
+        interest,
+        timeslot,
+        consultant,
+        companyId,
+        status,
+        advance,
+        rating,
+        feedback,
+        notes
+    } = req.body;
+    const connection = database.getConnection();
+
+    // Update appointment table
+    connection.query(
+        'UPDATE appointment SET `timeslot` = ?, interest = ?, `company-id` = ?, consultant = ?, advance = ? , rating = ?, feedback = ? WHERE `id` = ?',
+        [timeslot, interest, companyId, consultant, advance, rating, feedback, appointmentId],
+        (error) =>
+        {
+            if (error)
+            {
+                console.error('Error updating appointment:', error);
+                res.status(500).json({ error: 'Error updating appointment' });
+                return;
+            }
+
+            // Update customer table
+            connection.query(
+                'UPDATE customer SET `name-first` = ?, `name-last` = ?, notes = ? WHERE `id` = ?',
+                [firstName, lastName, notes, customerId],
+                (error) =>
+                {
+                    if (error)
+                    {
+                        console.error('Error updating customer:', error);
+                        res.status(500).json({ error: 'Error updating customer' });
+                        return;
+                    }
+                    res.status(200).json({ error: false });
+                }
+            );
+        }
+    );
+}
+
+

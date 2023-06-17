@@ -2,7 +2,7 @@ const catchAsync = require("../utils/catchAsync");
 const express = require('express');
 const router = express.Router();
 const controller = require("../controllers/sponsor")
-const { validationResult, check } = require('express-validator');
+const { validationResult, check, param } = require('express-validator');
 
 
 
@@ -17,5 +17,9 @@ router.post('/add', [
     check('editId').notEmpty().withMessage('Edit ID is required'),
 ], controller.addSponsor);
 
+
+router.get('/:territoryId', [
+    param('territoryId').notEmpty().withMessage('Territory ID must be an integer'),
+],controller.getSponsorsBasedOnTerritoryId)
 
 module.exports = router;

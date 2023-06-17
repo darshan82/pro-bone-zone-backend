@@ -7,7 +7,7 @@ const database = require('./sqlconnect');
 
 const appointment = require("./routes/appointment");
 // const availability = require("./routes/availability");
-// const customer = require("./routes/customer");
+const customer = require("./routes/customer");
 const event = require("./routes/event");
 // const payment = require("./routes/payment");
 const promotion = require("./routes/promotion");
@@ -28,14 +28,13 @@ app.use(express.json());
 
 app.use("/appointment", appointment);
 // app.use("/availability", availability);
-// app.use("/customer", customer);
+app.use("/customer", customer);
 app.use("/event", event);
 // app.use("/payment", payment);
 app.use("/promotion", promotion);
 // app.use("/promotionSponsor", promotionSponsor);
 app.use("/resource", resource);
 // app.use("/staff", staff);
-// app.use("/states", states);
 app.use("/territory", territory);
 app.use("/sponsor", sponsor);
 app.use("/user", user);

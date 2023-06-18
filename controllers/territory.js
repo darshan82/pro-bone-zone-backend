@@ -32,14 +32,77 @@ exports.addTerritory = catchAsync(async (req, res, next) =>
     const values = [licenseeId, state, county, defaultUrl, notes, editId];
     const connection = database.getConnection();
     const sql = 'INSERT INTO territory (`licensee-id`, `state`, `county`, `default-url`,`notes`, `edit-id`) VALUES (?, ?, ?, ?, ?, ?)';
-    connection.query(sql, values, (error, results) => {
-        if (error) {
-          console.error('Error inserting data into territory table:', error);
-          return res.status(500).json({ error: 'Internal server error' });
+    connection.query(sql, values, (error, results) =>
+    {
+        if (error)
+        {
+            console.error('Error inserting data into territory table:', error);
+            return res.status(500).json({ error: 'Internal server error' });
         }
-        
+
         // Return success response
         return res.status(200).json({ message: 'Data inserted successfully' });
-      });
+    });
 
 })
+
+
+exports.updateTerritory = catchAsync(async (req, res, next) =>
+{
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+    {
+        return res.status(400).json({ errors: errors.array() });
+    }
+    const territoryId = req.params.id;
+    const { licenseeId, state, county, defaultUrl, notes, editId } = req.body;
+    const values = [licenseeId, state, county, defaultUrl, notes, 0, territoryId];
+    const connection = database.getConnection();
+    const sql = 'UPDATE territory SET `licensee-id` = ?, `state` = ?, `county` = ?, `default-url` = ?, `notes` = ?, `edit-id` = ? WHERE `id` = ?';
+    connection.query(sql, values, (error, results) =>
+    {
+
+        if (error)
+        {
+            console.error('Error updating territory:', error);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+
+        // Check if any rows were affected by the update
+        if (results.affectedRows === 0)
+        {
+            return res.status(404).json({ error: 'Territory not found' });
+        }
+
+        // Return success response
+        return res.status(200).json({ message: 'Territory updated successfully' });
+    });
+});
+
+
+exports.deleteTerritory = catchAsync(async (req, res, next) =>
+{
+    const territoryId = req.params.id;
+    const connection = database.getConnection();
+    const sql = 'DELETE FROM territory WHERE `id` = ?';
+    connection.query(sql, territoryId, (error, results) =>
+    {
+        if (error)
+        {
+            console.error('Error deleting territory:', error);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+
+        // Check if any rows were affected by the delete
+        if (results.affectedRows === 0)
+        {
+            return res.status(404).json({ error: 'Territory not found' });
+        }
+
+        // Return success response
+        return res.status(200).json({ message: 'Territory deleted successfully' });
+    });
+});
+
+
+

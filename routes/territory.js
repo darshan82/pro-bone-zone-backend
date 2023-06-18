@@ -16,4 +16,15 @@ router.post('/add', [
 ], controller.addTerritory);
 
 
+
+router.put('/update/:id', [
+    // Validation rules using express-validator
+    check('licenseeId').isInt().notEmpty(),
+    check('state').notEmpty(),
+    check('county').notEmpty(),
+    check('defaultUrl').notEmpty(),
+    check('notes'),
+], controller.updateTerritory);
+router.delete('/delete/:id', controller.deleteTerritory);
+
 module.exports = router;

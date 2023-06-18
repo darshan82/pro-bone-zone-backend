@@ -14,7 +14,7 @@ exports.login = catchAsync(async (req, res, next) =>
 
     const connection = database.getConnection();
 
-    const { email, password,  } = req.body;
+    const { email, password, } = req.body;
 
     try
     {
@@ -100,3 +100,101 @@ exports.signup = catchAsync(async (req, res,) =>
 
     })
 })
+
+
+exports.getAllLicensees = catchAsync(async (req, res, next) =>
+{
+    const connection = database.getConnection();
+
+    connection.query('SELECT * FROM user WHERE `permit` = ?', ['licensee'], (error, results) =>
+    {
+        if (error)
+        {
+            console.error('Error executing query:', error);
+            res.status(500).json({ error: 'Error executing query:', error });
+            return;
+        }
+
+        // Process the query results
+        res.json(results);
+    });
+});
+
+exports.addLicensee = catchAsync(async (req, res, next) =>
+{
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+    {
+        return res.status(400).json({ errors: errors.array() });
+    }
+    const { permit, name_first, name_last, phone, email, pass, notes, edit_id } = req.body;
+    const values = [permit, name_first, name_last, phone, email, pass, notes, edit_id];
+    const connection = database.getConnection();
+    const sql = 'INSERT INTO user (`permit`, `name-first`, `name-last`, `phone`, `email`, `pass`, `notes`, `edit-id`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+    connection.query(sql, values, (error, results) =>
+    {
+        if (error)
+        {
+            console.error('Error inserting data into user table:', error);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+
+        // Return success response
+        return res.status(200).json({ message: 'Data inserted successfully' });
+    });
+});
+
+exports.updateLicensee = catchAsync(async (req, res, next) =>
+{
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+    {
+        return res.status(400).json({ errors: errors.array() });
+    }
+    const userId = req.params.id;
+    const { permit, name_first, name_last, phone, email, pass, notes, edit_id } = req.body;
+    const values = [name_first, name_last, phone, email, pass, notes, edit_id, userId, permit];
+    const connection = database.getConnection();
+    const sql = 'UPDATE user SET `name-first` = ?, `name-last` = ?, `phone` = ?, `email` = ?, `pass` = ?, `notes` = ?, `edit-id` = ? WHERE `id` = ? AND `permit` = ?';
+    connection.query(sql, values, (error, results) =>
+    {
+        if (error)
+        {
+            console.error('Error updating licensee:', error);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+
+        // Check if any rows were affected by the update
+        if (results.affectedRows === 0)
+        {
+            return res.status(400).json({ error: ' Not found' });
+        }
+
+        // Return success response
+        return res.status(200).json({ message: ' Updated successfully' });
+    });
+});
+
+exports.deleteLicensee = catchAsync(async (req, res, next) =>
+{
+    const userId = req.params.id;
+    const connection = database.getConnection();
+    const sql = 'DELETE FROM user WHERE `id` = ?';
+    connection.query(sql, [userId], (error, results) =>
+    {
+        if (error)
+        {
+            console.error('Error deleting licensee:', error);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+
+        // Check if any rows were affected by the delete
+        if (results.affectedRows === 0)
+        {
+            return res.status(404).json({ error: 'Licensee not found' });
+        }
+
+        // Return success response
+        return res.status(200).json({ message: 'Licensee deleted successfully' });
+    });
+});

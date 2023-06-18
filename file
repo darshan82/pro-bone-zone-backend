@@ -83,6 +83,8 @@ CREATE TABLE `customer` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+
+
 --
 -- Dumping data for table `customer`
 --
@@ -259,12 +261,6 @@ INSERT INTO `sponsor` (`id`, `territory_id`, `scategory`, `stype`, `organization
 -- Table structure for table `staff`
 --
 
-CREATE TABLE `staff` (
-  `id` int(11) UNSIGNED NOT NULL,
-  `territory-id` int(11) UNSIGNED NOT NULL,
-  `user-id` int(11) UNSIGNED NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `staff`
@@ -352,18 +348,6 @@ INSERT INTO `states` (`id`, `name`, `abbrev`) VALUES
 -- Table structure for table `territory`
 --
 
-CREATE TABLE `territory` (
-  `id` int(11) UNSIGNED NOT NULL,
-  `licensee-id` int(11) UNSIGNED NOT NULL,
-  `country` varchar(30) NOT NULL DEFAULT 'USA',
-  `state` varchar(20) NOT NULL,
-  `county` varchar(30) NOT NULL,
-  `default-url` varchar(50) NOT NULL,
-  `notes` text NOT NULL,
-  `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `edit-id` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `territory`
@@ -391,6 +375,25 @@ CREATE TABLE `user` (
   `notes` text,
   `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `edit-id` int(11) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `staff` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `territory-id` int(11) UNSIGNED NOT NULL,
+  `user-id` int(11) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE `territory` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `licensee-id` int(11) UNSIGNED NOT NULL,
+  `country` varchar(30) NOT NULL DEFAULT 'USA',
+  `state` varchar(20) NOT NULL,
+  `county` varchar(30) NOT NULL,
+  `default-url` varchar(50) NOT NULL,
+  `notes` text NOT NULL,
+  `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `edit-id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

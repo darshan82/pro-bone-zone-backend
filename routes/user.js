@@ -22,4 +22,29 @@ router.post('/signup',
     ]
     , controller.signup);
 
+
+router.get('/licensee', controller.getAllLicensees);
+router.post('/licensee/add', [
+    // Validation rules using express-validator
+    check('permit').equals('licensee').notEmpty(),
+    check('name_first').notEmpty(),
+    check('name_last').notEmpty(),
+    check('phone').notEmpty(),
+    check('email').notEmpty().isEmail(),
+    check('pass').notEmpty(),
+    check('notes'),
+    check('edit_id').isInt().notEmpty()
+], controller.addLicensee);
+router.put('/licensee/update/:id', [
+    // Validation rules using express-validator
+    check('permit').notEmpty().withMessage('Permit is required').isIn(['licensee', 'staff']).withMessage('Invalid permit value'),
+    check('name_first').notEmpty(),
+    check('name_last').notEmpty(),
+    check('phone').notEmpty(),
+    check('email').notEmpty().isEmail(),
+    check('pass').notEmpty(),
+    check('notes'),
+    check('edit_id').isInt().notEmpty()
+], controller.updateLicensee);
+router.delete('/licensee/delete/:id', controller.deleteLicensee);
 module.exports = router;

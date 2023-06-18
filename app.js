@@ -6,16 +6,15 @@ const cors = require("cors");
 const database = require('./sqlconnect');
 
 const appointment = require("./routes/appointment");
-// const availability = require("./routes/availability");
 const customer = require("./routes/customer");
 const event = require("./routes/event");
 // const payment = require("./routes/payment");
+// app.use("/payment", payment);
+
 const promotion = require("./routes/promotion");
-// const promotionSponsor = require("./routes/promotionSponsor");
 const resource = require("./routes/resource");
-// const staff = require("./routes/staff");
+const staff = require("./routes/staff");
 const sponsor = require("./routes/sponsor");
-// const states = require("./routes/states");
 const territory = require("./routes/territory");
 const user = require("./routes/user");
 
@@ -27,14 +26,11 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/appointment", appointment);
-// app.use("/availability", availability);
 app.use("/customer", customer);
 app.use("/event", event);
-// app.use("/payment", payment);
 app.use("/promotion", promotion);
-// app.use("/promotionSponsor", promotionSponsor);
 app.use("/resource", resource);
-// app.use("/staff", staff);
+app.use("/staff", staff);
 app.use("/territory", territory);
 app.use("/sponsor", sponsor);
 app.use("/user", user);

@@ -4,64 +4,20 @@ const database = require('../sqlconnect');
 const catchAsync = require("../utils/catchAsync");
 
 
-exports.addPromotion = catchAsync(async (req, res, next) =>
+
+
+exports.getPromotionById = catchAsync(async (req, res, next) =>
 {
-  const errors = validationResult(req);
-  if (!errors.isEmpty())
-  {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
-  const {
-    territoryId,
-    pType,
-    pUrl,
-    event1Id,
-    event2Id,
-    event3Id,
-    event4Id,
-    attendees,
-    editId
-  } = req.body;
-
-  const values = [
-    territoryId,
-    pType,
-    pUrl,
-    event1Id,
-    event2Id,
-    event3Id,
-    event4Id,
-    attendees,
-    editId
-  ];
-
-  const connection = database.getConnection();
-  const sql =
-    'INSERT INTO promotion (`territory-id`, `ptype`, `p-url`, `event1-id`, `event2-id`, `event3-id`, `event4-id`, `attendees`, `edit-id`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
-
-  connection.query(sql, values, (error, results) =>
-  {
-    if (error)
-    {
-      console.error('Error inserting data into promotion table:', error);
-      return res.status(500).json({ error: 'Internal server error' });
-    }
-
-    // Return success response
-    return res.status(200).json({ message: 'Data inserted successfully' });
-  });
-});
-
-exports.getPromotionById = catchAsync(async (req, res, next) => {
   const promotionId = req.params.promotionId; // Assuming you pass the promotion ID as a URL parameter
 
   const connection = database.getConnection();
 
   connection.query(
     `SELECT * FROM promotion WHERE id = ${promotionId}`,
-    (error, promotionResults) => {
-      if (error) {
+    (error, promotionResults) =>
+    {
+      if (error)
+      {
         console.error('Error executing promotion query:', error);
         res.status(500).json({ error: 'Error executing promotion query:', error });
         return;
@@ -76,7 +32,8 @@ exports.getPromotionById = catchAsync(async (req, res, next) => {
         promotionData['event4-id']
       ].filter(Boolean); // Filter out any null/undefined event IDs
 
-      if (eventIds.length === 0) {
+      if (eventIds.length === 0)
+      {
         // If no event IDs found, return the promotion data without events
         res.json(promotionData);
         return;
@@ -84,8 +41,10 @@ exports.getPromotionById = catchAsync(async (req, res, next) => {
 
       connection.query(
         `SELECT * FROM event WHERE id IN (${eventIds.join(',')})`,
-        (error, eventResults) => {
-          if (error) {
+        (error, eventResults) =>
+        {
+          if (error)
+          {
             console.error('Error executing event query:', error);
             res.status(500).json({ error: 'Error executing event query:', error });
             return;
@@ -97,8 +56,10 @@ exports.getPromotionById = catchAsync(async (req, res, next) => {
             `SELECT * FROM availability WHERE event_id IN (${eventIdsWithAvailability.join(
               ','
             )})`,
-            (error, availabilityResults) => {
-              if (error) {
+            (error, availabilityResults) =>
+            {
+              if (error)
+              {
                 console.error('Error executing availability query:', error);
                 res.status(500).json({ error: 'Error executing availability query:', error });
                 return;
@@ -119,28 +80,210 @@ exports.getPromotionById = catchAsync(async (req, res, next) => {
   );
 });
 
-// exports.getPromotionById = catchAsync(async (req, res, next) =>
-// {
-//   const { promotionId } = req.params; // Assuming you pass the promotion ID in the request params
 
-//   const connection = database.getConnection();
-//   connection.query(
-//     `SELECT p.*, e.* 
-//   FROM promotion p
-//   LEFT JOIN event e ON p.\`event1-id\` = e.id OR p.\`event2-id\` = e.id OR p.\`event3-id\` = e.id OR p.\`event4-id\` = e.id
-//   WHERE p.id = ?`,
-//     [promotionId],
-//     (error, results) =>
-//     {
-//       if (error || results.length === 0)
-//       {
-//         console.error('Error executing query:', error);
-//         res.status(400).json({ error: 'Error executing query:', error });
-//         return;
-//       }
+exports.getAllPromotions = catchAsync(async (req, res, next) =>
+{
+  const connection = database.getConnection();
 
-//       // Process the query results
-//       res.json(results);
-//     }
-//   );
-// });
+  connection.query('SELECT * FROM promotion', (error, promotionResults) =>
+  {
+    if (error)
+    {
+      console.error('Error executing promotion query:', error);
+      res.status(500).json({ error: 'Error executing promotion query:', error });
+      return;
+    }
+
+    if (promotionResults.length === 0)
+    {
+      // If no promotions found, return an empty array
+      res.json([]);
+      return;
+    }
+
+    const eventIds = promotionResults.reduce((ids, promotion) =>
+    {
+      return ids.concat(
+        [
+          promotion['event1-id'],
+          promotion['event2-id'],
+          promotion['event3-id'],
+          promotion['event4-id']
+        ].filter(Boolean)
+      );
+    }, []);
+
+    if (eventIds.length === 0)
+    {
+      // If no event IDs found, return the promotion data without events
+      res.json(promotionResults);
+      return;
+    }
+
+    connection.query(`SELECT * FROM event WHERE id IN (${eventIds.join(',')})`, (error, eventResults) =>
+    {
+      if (error)
+      {
+        console.error('Error executing event query:', error);
+        res.status(500).json({ error: 'Error executing event query:', error });
+        return;
+      }
+
+      const eventIdsWithAvailability = eventResults.map((event) => event.id);
+
+      connection.query(
+        `SELECT * FROM availability WHERE event_id IN (${eventIdsWithAvailability.join(',')})`,
+        (error, availabilityResults) =>
+        {
+          if (error)
+          {
+            console.error('Error executing availability query:', error);
+            res.status(500).json({ error: 'Error executing availability query:', error });
+            return;
+          }
+
+          const promotionsWithEvents = promotionResults.map((promotion) =>
+          {
+            const promotionEventIds = [
+              promotion['event1-id'],
+              promotion['event2-id'],
+              promotion['event3-id'],
+              promotion['event4-id']
+            ].filter(Boolean);
+
+            const promotionEvents = eventResults.filter((event) =>
+              promotionEventIds.includes(event.id)
+            );
+
+            const promotionAvailability = availabilityResults.filter((availability) =>
+              promotionEventIds.includes(availability.event_id)
+            );
+
+            return {
+              ...promotion,
+              events: promotionEvents,
+              availability: promotionAvailability
+            };
+          });
+
+          res.json(promotionsWithEvents);
+        }
+      );
+    });
+  });
+});
+
+exports.deletePromotion = catchAsync(async (req, res, next) =>
+{
+  const promotionId = req.params.id;
+
+  const connection = database.getConnection();
+  const sql = 'DELETE FROM promotion WHERE id = ?';
+
+  connection.query(sql, [promotionId], (error, results) =>
+  {
+    if (error)
+    {
+      console.error('Error deleting promotion:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+
+    // Check if any rows were affected by the delete
+    if (results.affectedRows === 0)
+    {
+      return res.status(404).json({ error: 'Promotion not found' });
+    }
+
+    // Return success response
+    return res.status(200).json({ message: 'Promotion deleted successfully' });
+  });
+});
+
+exports.updatePromotion = catchAsync(async (req, res, next) =>
+{
+  const promotionId = req.params.id;
+  const {
+    territoryId,
+    ptype,
+    pUrl,
+    eventId1,
+    eventId2,
+    eventId3,
+    eventId4,
+    attendees,
+    editId
+  } = req.body;
+
+  const connection = database.getConnection();
+  const sql = 'UPDATE promotion SET `territory-id` = ?, `ptype` = ?, `p-url` = ?, `event1-id` = ?, `event2-id` = ?, `event3-id` = ?, `event4-id` = ?, `attendees` = ?, `edit-id` = ? WHERE `id` = ?';
+
+  const values = [territoryId, ptype, pUrl, eventId1, eventId2, eventId3, eventId4, attendees, 1, promotionId];
+
+  connection.query(sql, values, (error, results) =>
+  {
+
+    if (error)
+    {
+      console.error('Error updating promotion:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+
+    // Check if any rows were affected by the update
+    if (results.affectedRows === 0)
+    {
+      return res.status(404).json({ error: 'Promotion not found' });
+    }
+
+    // Return success response
+    return res.status(200).json({ message: 'Promotion updated successfully' });
+  });
+});
+
+exports.addPromotion = catchAsync(async (req, res, next) =>
+{
+  const errors = validationResult(req);
+  if (!errors.isEmpty())
+  {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const {
+    territoryId,
+    ptype,
+    pUrl,
+    eventId1,
+    eventId2,
+    eventId3,
+    eventId4,
+    attendees,
+    editId
+  } = req.body;
+
+  const values = [
+    territoryId,
+    ptype,
+    pUrl,
+    eventId1,
+    eventId2,
+    eventId3,
+    eventId4,
+    attendees,
+    1
+  ];
+
+  const connection = database.getConnection();
+  const sql = 'INSERT INTO promotion (`territory-id`, `ptype`, `p-url`, `event1-id`, `event2-id`, `event3-id`, `event4-id`, `attendees`, `edit-id`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+
+  connection.query(sql, values, (error, results) =>
+  {
+    // Error handling
+    if (error)
+    {
+      console.error('Error adding promotion:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+
+    // Return success response
+    return res.status(200).json({ message: 'Promotion added successfully' });
+  });
+});

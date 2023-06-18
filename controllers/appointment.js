@@ -96,6 +96,13 @@ exports.deleteAppointment = catchAsync(async (req, res, next) =>
             return res.status(500).json({ error: 'Internal server error' });
         }
 
+        console.log("results", results)
+        console.log("results", error)
+        if (results?.affectedRows === 0)
+        {
+            return res.status(400).json({ error: true, message: 'Record doesn not exist' });
+
+        }
         // Return success response
         return res.status(200).json({ message: 'Data deleted successfully' });
     });
@@ -163,7 +170,7 @@ exports.updateAppointement = async (req, res) =>
     {
         return res.status(400).json({ errors: errors.array() });
     }
-    
+
     const {
         firstName,
         lastName,

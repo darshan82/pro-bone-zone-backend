@@ -6,15 +6,35 @@ const { validationResult, check } = require('express-validator');
 
 
 
-router.post('/add',
-    [
-        check('territoryId').notEmpty().withMessage('Territory ID is required'),
-        check('pType').notEmpty().withMessage('Promotion Type is required'),
-        check('pUrl').isURL().withMessage('Invalid URL'),
-        check('event1Id').notEmpty().withMessage('Event 1 ID is required'),
-    ]
-    , controller.addPromotion)
+
 
 router.get('/detail/:promotionId', controller.getPromotionById)
+
+router.get('/', controller.getAllPromotions)
+
+
+router.delete('/:id', controller.deletePromotion);
+router.put('/:id', [
+    check('territoryId').isInt().notEmpty(),
+    check('ptype').notEmpty(),
+    check('pUrl').notEmpty(),
+    check('eventId1').isInt().notEmpty(),
+    check('eventId2').optional({ nullable: true }).isInt(),
+    check('eventId3').optional({ nullable: true }).isInt(),
+    check('eventId4').optional({ nullable: true }).isInt(),
+    check('attendees').optional({ nullable: true }).isInt(),
+], controller.updatePromotion);
+
+router.post('/add', [
+    check('territoryId').isInt().notEmpty(),
+    check('ptype').notEmpty(),
+    check('pUrl').notEmpty(),
+    check('eventId1').isInt().notEmpty(),
+    check('eventId2').optional({ nullable: true }).isInt(),
+    check('eventId3').optional({ nullable: true }).isInt(),
+    check('eventId4').optional({ nullable: true }).isInt(),
+    check('attendees').optional({ nullable: true }).isInt(),
+], controller.addPromotion);
+
 module.exports = router;
 

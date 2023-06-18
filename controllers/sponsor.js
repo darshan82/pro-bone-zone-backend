@@ -1,5 +1,6 @@
 const { validationResult } = require('express-validator');
 const database = require('../sqlconnect');
+const catchAsync = require('../utils/catchAsync');
 
 exports.addSponsor = (req, res) =>
 {
@@ -95,3 +96,135 @@ exports.getSponsorsBasedOnTerritoryId = async (req, res) =>
     res.status(500).json({ error: 'Error executing query' });
   }
 };
+
+
+exports.deleteSponsor = catchAsync(async (req, res, next) =>
+{
+  const sponsorId = req.params.id;
+
+  const connection = database.getConnection();
+  const sql = 'DELETE FROM sponsor WHERE id = ?';
+  const values = [sponsorId];
+
+  connection.query(sql, values, (error, results) =>
+  {
+    if (error)
+    {
+      console.error('Error deleting sponsor:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+
+    // Check if any rows were affected by the delete
+    if (results.affectedRows === 0)
+    {
+      return res.status(404).json({ error: 'Sponsor not found' });
+    }
+
+    // Return success response
+    return res.status(200).json({ message: 'Sponsor deleted successfully' });
+  });
+});
+
+
+exports.updateSponsor = catchAsync(async (req, res, next) =>
+{
+  const sponsorId = req.params.id;
+  const {
+    scategory,
+    stype,
+    organizationName,
+    webpage,
+    logo,
+    description,
+    contactName,
+    email,
+    phone,
+    notes,
+    editId
+  } = req.body;
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty())
+  {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const connection = database.getConnection();
+  const sql =
+    'UPDATE sponsor SET `scategory` = ?, `stype` = ?, `organization-name` = ?, `webpage` = ?, `logo` = ?, `description` = ?, `contact-name` = ?, `email` = ?, `phone` = ?, `notes` = ?, `edit-id` = ? WHERE `id` = ?';
+  const values = [
+    scategory,
+    stype,
+    organizationName,
+    webpage,
+    logo,
+    description,
+    contactName,
+    email,
+    phone,
+    notes,
+    editId,
+    sponsorId
+  ];
+
+  connection.query(sql, values, (error, results) =>
+  {
+    if (error)
+    {
+      console.error('Error updating sponsor:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+
+    // Check if any rows were affected by the update
+    if (results.affectedRows === 0)
+    {
+      return res.status(404).json({ error: 'Sponsor not found' });
+    }
+
+    // Return success response
+    return res.status(200).json({ message: 'Sponsor updated successfully' });
+  });
+});
+
+exports.getSponsors = catchAsync(async (req, res, next) =>
+{
+  const connection = database.getConnection();
+
+  const sql =
+    'SELECT sponsor.*, territory.country, territory.state, territory.county, territory.\`default-url\` FROM sponsor JOIN territory ON sponsor.territory_id = territory.id';
+
+  connection.query(sql, (error, results) =>
+  {
+    if (error)
+    {
+      console.error('Error executing query:', error);
+      return res.status(500).json({ error: 'Error executing query' });
+    }
+
+    // Process the query results
+    const sponsors = results.map((sponsor) => ({
+      id: sponsor.id,
+      territoryId: sponsor.territory_id,
+      scategory: sponsor.scategory,
+      stype: sponsor.stype,
+      organizationName: sponsor['organization-name'],
+      webpage: sponsor.webpage,
+      logo: sponsor.logo,
+      description: sponsor.description,
+      contactName: sponsor['contact-name'],
+      email: sponsor.email,
+      phone: sponsor.phone,
+      notes: sponsor.notes,
+      updated: sponsor.updated,
+      editId: sponsor['edit-id'],
+      country: sponsor.country,
+      state: sponsor.state,
+      county: sponsor.county,
+      defaultUrl: sponsor['default-url'],
+    }));
+
+    res.json(sponsors);
+  });
+});
+
+

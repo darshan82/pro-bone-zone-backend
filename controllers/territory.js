@@ -28,7 +28,6 @@ exports.addTerritory = catchAsync(async (req, res, next) =>
     {
         return res.status(400).json({ errors: errors.array() });
     }
-    console.log("mandhawni")
     const { licenseeId, state, county, defaultUrl, notes, editId } = req.body;
     const values = [licenseeId, state, county, defaultUrl, notes, editId];
     const connection = database.getConnection();

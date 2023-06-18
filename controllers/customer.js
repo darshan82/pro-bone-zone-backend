@@ -21,7 +21,6 @@ exports.addCustomer = async (req, res) =>
         notes,
     } = req.body;
 
-    console.log(req.body["name_first"])
     try
     {
         const connection = database.getConnection();
@@ -184,7 +183,6 @@ exports.getCustomerList = async (req, res) =>
         const connection = database.getConnection();
         const sql = 'SELECT * FROM customer WHERE `territory_id` = ?';
         const values = [territory_id];
-        console.log(territory_id)
         connection.query(sql, values, (error, results) =>
         {
             if (error)

@@ -69,8 +69,6 @@ exports.updateResource = catchAsync(async (req, res, next) => {
   const { category, title, viewers, type, filepath, status, editId } = req.body;
   const connection = database.getConnection();
 
-  console.log("ss",resourceId)
-  console.log("ss",req.body)
 
   const sql = `UPDATE resource SET category = ?, title = ?, viewers = ?, type = ?, filepath = ?, status = ?, \`edit-id\` = ? WHERE id = ?`;
   const values = [category, title, viewers, type, filepath, status, editId, resourceId];

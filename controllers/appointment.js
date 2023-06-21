@@ -189,7 +189,7 @@ exports.updateAppointement = async (req, res) =>
     // Update appointment table
     connection.query(
         'UPDATE appointment SET `timeslot` = ?, interest = ?, `company-id` = ?, consultant = ?, advance = ? , rating = ?, feedback = ?, status = ? WHERE `id` = ?',
-        [timeslot, interest, companyId, consultant, advance, rating, feedback, appointmentId, status],
+        [timeslot, interest, companyId, consultant, advance, rating, feedback, status, appointmentId],
         (error) =>
         {
             if (error)

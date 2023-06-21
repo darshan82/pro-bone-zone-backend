@@ -23,6 +23,7 @@ exports.login = catchAsync(async (req, res, next) =>
             // Query the database to check if user exists
 
             // Check if a matching user is found
+            console.log("rows", rows)
             if (rows && rows.length === 1)
             {
                 const user = rows[0];

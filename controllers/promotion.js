@@ -49,31 +49,43 @@ exports.getPromotionById = catchAsync(async (req, res, next) =>
             res.status(500).json({ error: 'Error executing event query:', error });
             return;
           }
+          console.log("eventResults",eventResults)
 
           const eventIdsWithAvailability = eventResults.map((event) => event.id);
-
-          connection.query(
-            `SELECT * FROM availability WHERE event_id IN (${eventIdsWithAvailability.join(
-              ','
-            )})`,
-            (error, availabilityResults) =>
-            {
-              if (error)
+          console.log("eventIdsWithAvailability", eventIdsWithAvailability)
+          if (eventIdsWithAvailability && eventIdsWithAvailability.length)
+            connection.query(
+              `SELECT * FROM availability WHERE event_id IN (${eventIdsWithAvailability.join(
+                ','
+              )})`,
+              (error, availabilityResults) =>
               {
-                console.error('Error executing availability query:', error);
-                res.status(500).json({ error: 'Error executing availability query:', error });
-                return;
+                if (error)
+                {
+                  console.error('Error executing availability query:', error);
+                  res.status(500).json({ error: 'Error executing availability query:', error });
+                  return;
+                }
+
+                const promotionWithEvents = {
+                  ...promotionData,
+                  events: eventResults,
+                  availability: availabilityResults
+                };
+
+                res.json(promotionWithEvents);
               }
+            );
+          else
+          {
+            const promotionWithEvents = {
+              ...promotionData,
+              events: eventResults,
+              availability: []
+            };
 
-              const promotionWithEvents = {
-                ...promotionData,
-                events: eventResults,
-                availability: availabilityResults
-              };
-
-              res.json(promotionWithEvents);
-            }
-          );
+            res.json(promotionWithEvents);
+          }
         }
       );
     }

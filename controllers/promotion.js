@@ -49,7 +49,7 @@ exports.getPromotionById = catchAsync(async (req, res, next) =>
             res.status(500).json({ error: 'Error executing event query:', error });
             return;
           }
-          console.log("eventResults",eventResults)
+          console.log("eventResults", eventResults)
 
           const eventIdsWithAvailability = eventResults.map((event) => event.id);
           console.log("eventIdsWithAvailability", eventIdsWithAvailability)
@@ -143,6 +143,12 @@ exports.getAllPromotions = catchAsync(async (req, res, next) =>
 
       const eventIdsWithAvailability = eventResults.map((event) => event.id);
 
+      if (eventIdsWithAvailability.length === 0)
+      {
+        // If no event IDs found, return the promotion data without events
+        res.json(promotionResults);
+        return;
+      }
       connection.query(
         `SELECT * FROM availability WHERE event_id IN (${eventIdsWithAvailability.join(',')})`,
         (error, availabilityResults) =>

@@ -229,13 +229,15 @@ exports.updatePromotion = catchAsync(async (req, res, next) =>
     eventId3,
     eventId4,
     attendees,
-    editId
+    editId,
+    locked
   } = req.body;
 
   const connection = database.getConnection();
-  const sql = 'UPDATE promotion SET `territory-id` = ?, `ptype` = ?, `p-url` = ?, `event1-id` = ?, `event2-id` = ?, `event3-id` = ?, `event4-id` = ?, `attendees` = ?, `edit-id` = ? WHERE `id` = ?';
+  const sql = 'UPDATE promotion SET `territory-id` = ?, `ptype` = ?, `p-url` = ?, `event1-id` = ?, `event2-id` = ?, `event3-id` = ?, `event4-id` = ?, `attendees` = ?, `edit-id` = ?, `locked` = ? WHERE `id` = ?';
 
-  const values = [territoryId, ptype, pUrl, eventId1, eventId2, eventId3, eventId4, attendees, 1, promotionId];
+  const values = [territoryId, ptype, pUrl, eventId1, eventId2, eventId3, eventId4, attendees, 1, locked, promotionId];
+  console.log(values);
 
   connection.query(sql, values, (error, results) =>
   {
@@ -243,7 +245,7 @@ exports.updatePromotion = catchAsync(async (req, res, next) =>
     if (error)
     {
       console.error('Error updating promotion:', error);
-      return res.status(500).json({ error: 'Internal server error' });
+      return res.status(500).json({ error: 'Internal server error' + error });
     }
 
     // Check if any rows were affected by the update
@@ -274,7 +276,8 @@ exports.addPromotion = catchAsync(async (req, res, next) =>
     eventId3,
     eventId4,
     attendees,
-    editId
+    editId,
+    locked
   } = req.body;
 
   const values = [
@@ -286,11 +289,12 @@ exports.addPromotion = catchAsync(async (req, res, next) =>
     eventId3,
     eventId4,
     attendees,
-    1
+    1,
+    locked,
   ];
 
   const connection = database.getConnection();
-  const sql = 'INSERT INTO promotion (`territory-id`, `ptype`, `p-url`, `event1-id`, `event2-id`, `event3-id`, `event4-id`, `attendees`, `edit-id`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+  const sql = 'INSERT INTO promotion (`territory-id`, `ptype`, `p-url`, `event1-id`, `event2-id`, `event3-id`, `event4-id`, `attendees`, `edit-id`,`locked`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)';
 
   connection.query(sql, values, (error, results) =>
   {

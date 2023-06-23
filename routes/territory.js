@@ -28,5 +28,7 @@ router.put('/update/:id', [
 router.delete('/delete/:id', controller.deleteTerritory);
 
 router.get('/:id', controller.getTerritoryById);
+router.post('/query', controller.query);
+
 
 module.exports = router;

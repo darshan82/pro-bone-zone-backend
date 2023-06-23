@@ -47,4 +47,7 @@ router.put('/licensee/update/:id', [
     check('edit_id').isInt().notEmpty()
 ], controller.updateLicensee);
 router.delete('/licensee/delete/:id', controller.deleteLicensee);
+
+router.get('/licensee/:id', controller.getUserLicenseeId);
+
 module.exports = router;

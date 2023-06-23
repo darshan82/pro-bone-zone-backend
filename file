@@ -377,13 +377,6 @@ CREATE TABLE `user` (
   `edit-id` int(11) UNSIGNED NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-CREATE TABLE `staff` (
-  `id` int(11) UNSIGNED NOT NULL,
-  `territory-id` int(11) UNSIGNED NOT NULL,
-  `user-id` int(11) UNSIGNED NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
 CREATE TABLE `territory` (
   `id` int(11) UNSIGNED NOT NULL,
   `licensee-id` int(11) UNSIGNED NOT NULL,
@@ -396,6 +389,14 @@ CREATE TABLE `territory` (
   `edit-id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `staff` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `territory-id` int(11) UNSIGNED NOT NULL,
+  `user-id` int(11) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
 
 --
 -- Dumping data for table `user`

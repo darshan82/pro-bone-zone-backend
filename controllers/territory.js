@@ -106,3 +106,25 @@ exports.deleteTerritory = catchAsync(async (req, res, next) =>
 
 
 
+
+
+exports.getTerritoryById = catchAsync(async (req, res, next) => {
+    const territoryId = req.params.id;
+    const connection = database.getConnection();
+    const sql = 'SELECT t.*, u.* FROM territory t JOIN user u ON t.`licensee-id` = u.id WHERE t.id = ?';
+    connection.query(sql, territoryId, (error, results) => {
+      if (error) {
+        console.error('Error executing query:', error);
+        return res.status(500).json({ error: 'Error executing query' });
+      }
+  
+      if (results.length === 0) {
+        return res.status(404).json({ error: 'Territory not found' });
+      }
+  
+      // Return the territory with licensee information
+      const territory = results[0];
+      res.json(territory);
+    });
+  });
+  

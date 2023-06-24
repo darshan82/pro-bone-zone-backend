@@ -26,7 +26,7 @@ router.post('/signup',
 router.get('/licensee', controller.getAllLicensees);
 router.post('/licensee/add', [
     // Validation rules using express-validator
-    check('permit').equals('licensee').notEmpty(),
+    check('permit').notEmpty(),
     check('name_first').notEmpty(),
     check('name_last').notEmpty(),
     check('phone').notEmpty(),

@@ -7,7 +7,7 @@ exports.territory = catchAsync(async (req, res, next) =>
     const connection = database.getConnection();
 
     const query = `
-      SELECT territory.*, user.*
+      SELECT user.*, territory.*
       FROM territory
       INNER JOIN user ON territory.\`licensee-id\` = user.id
     `;

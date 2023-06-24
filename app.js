@@ -1,9 +1,11 @@
 
 const express = require('express');
-const app = express();
-const morgan = require('morgan');
-const cors = require("cors");
 const database = require('./sqlconnect');
+const morgan = require('morgan');
+const cors = require('cors');
+const multer = require('multer');
+const path = require('path');
+const app = express();
 
 const appointment = require("./routes/appointment");
 const customer = require("./routes/customer");
@@ -20,6 +22,7 @@ const user = require("./routes/user");
 const blogs = require("./routes/blogs.js");
 
 
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 
@@ -62,6 +65,48 @@ app.get('/', (req, res) =>
 {
     res.send('Hello, World!');
 });
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb)
+    {
+        cb(null, 'uploads/'); // Set the destination folder where files will be stored
+    },
+    filename: function (req, file, cb)
+    {
+        const fileName = Date.now() + '-' + file.originalname; // Generate a unique file name
+        cb(null, fileName);
+    },
+});
+
+const upload = multer({ storage });
+
+// Route to handle file/image upload
+app.post('/upload', upload.single('file'), (req, res) =>
+{
+    // Access the uploaded file details
+    const uploadedFile = req.file;
+
+    if (!uploadedFile)
+    {
+        // No file was uploaded
+        res.status(400).json({ error: 'No file uploaded' });
+        return;
+    }
+
+    // File/image was successfully uploaded
+    const filePath = path.join(__dirname, 'uploads', uploadedFile.filename);
+    res.json({
+        message: 'File uploaded successfully',
+        file: {
+            filename: uploadedFile.originalname,
+            size: uploadedFile.size,
+            mimetype: uploadedFile.mimetype,
+            path: filePath, // File path on your server
+        },
+    });
+});
+
+
 app.all('*', (req, res, next) =>
 {
     res.status(400).json({

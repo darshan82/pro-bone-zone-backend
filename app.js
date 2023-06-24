@@ -28,11 +28,13 @@ app.use("/appointment", appointment);
 app.use("/customer", customer);
 app.use("/event", event);
 app.use("/promotion", promotion);
-app.use("/resource", resource);
 app.use("/staff", staff);
-app.use("/territory", territory);
 app.use("/sponsor", sponsor);
+
+
+app.use("/resource", resource);
 app.use("/user", user);
+app.use("/territory", territory);
 app.use("/blogs", blogs);
 
 app.get("/global/states", (req, res) => {

@@ -228,3 +228,27 @@ exports.getSponsors = catchAsync(async (req, res, next) =>
 });
 
 
+
+exports.getSponsor = (req, res) =>
+{
+  const blogId = req.params.id;
+  const connection = database.getConnection();
+  const sql = 'SELECT * FROM sponsor WHERE id = ?';
+  connection.query(sql, blogId, (error, results) =>
+  {
+    if (error)
+    {
+      console.error('Error executing query:', error);
+      return res.status(500).json({ error: 'Error executing query' });
+    }
+
+    if (results.length === 0)
+    {
+      return res.status(404).json({ error: 'Blog not found' });
+    }
+
+    // Return the blog
+    const blog = results[0];
+    res.json(blog);
+  });
+};

@@ -14,6 +14,7 @@ exports.getStaffs = async (req, res) =>
           FROM staff s
           INNER JOIN territory t ON s.\`territory-id\` = t.id
           INNER JOIN user u ON s.\`user-id\` = u.id
+          WHERE u.permit = 'staff'
         `;
 
         connection.query(sql, (error, results) =>

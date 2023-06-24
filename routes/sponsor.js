@@ -25,6 +25,8 @@ router.get('/:territoryId', [
 
 // DELETE /sponsor/:id
 router.delete('/:id', controller.deleteSponsor);
+router.get('/single/:id', controller.getSponsor);
+
 
 
 // PUT /sponsor/:id

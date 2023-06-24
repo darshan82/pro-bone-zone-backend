@@ -1,8 +1,7 @@
-const catchAsync = require("../utils/catchAsync");
 const express = require('express');
 const router = express.Router();
 const controller = require("../controllers/resource")
-const { validationResult, body,param } = require('express-validator');
+const { body, param } = require('express-validator');
 const { getOneResource, getAllResources, updateResource, deleteResource } = require('../controllers/resource');
 
 

@@ -201,31 +201,37 @@ exports.deleteLicensee = catchAsync(async (req, res, next) =>
 });
 
 
-exports.getUserLicenseeId = catchAsync(async (req, res) => {
+exports.getUserLicenseeId = catchAsync(async (req, res) =>
+{
     const userId = req.params.id;
-  
-    try {
-      const connection = database.getConnection();
-      const sql = `
+
+    try
+    {
+        const connection = database.getConnection();
+        const sql = `
         SELECT *
         FROM user
         WHERE id = ?
       `;
-  
-      connection.query(sql, [userId], (error, results) => {
-        if (error) {
-          console.error('Error retrieving user licensee data:', error);
-          return res.status(500).json({ error: 'Internal server error' });
-        }
-  
-        if (results.length === 0) {
-          return res.status(404).json({ error: 'User not found' });
-        }
-  
-        return res.status(200).json(results[0]);
-      });
-    } catch (error) {
-      console.error('Error connecting to the database:', error);
-      return res.status(500).json({ error: 'Internal server error' });
+
+        connection.query(sql, [userId], (error, results) =>
+        {
+            if (error)
+            {
+                console.error('Error retrieving user licensee data:', error);
+                return res.status(500).json({ error: 'Internal server error' });
+            }
+
+            if (results.length === 0)
+            {
+                return res.status(404).json({ error: 'User not found' });
+            }
+
+            return res.status(200).json(results[0]);
+        });
+    } catch (error)
+    {
+        console.error('Error connecting to the database:', error);
+        return res.status(500).json({ error: 'Internal server error' });
     }
-  });
+});

@@ -218,4 +218,3 @@ exports.updateAppointement = async (req, res) =>
     );
 }
 
-

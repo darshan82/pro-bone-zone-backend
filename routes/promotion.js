@@ -1,17 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const controller = require("../controllers/promotion")
-const { validationResult, check } = require('express-validator');
-
-
-
-
-
+const { check } = require('express-validator');
 
 router.get('/detail/:promotionId', controller.getPromotionById)
 
 router.get('/', controller.getAllPromotions)
-
 
 router.delete('/:id', controller.deletePromotion);
 router.put('/:id', [

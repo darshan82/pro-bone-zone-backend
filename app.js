@@ -1,4 +1,3 @@
-
 const express = require('express');
 const database = require('./sqlconnect');
 const morgan = require('morgan');
@@ -10,9 +9,6 @@ const app = express();
 const appointment = require("./routes/appointment");
 const customer = require("./routes/customer");
 const event = require("./routes/event");
-// const payment = require("./routes/payment");
-// app.use("/payment", payment);
-
 const promotion = require("./routes/promotion");
 const resource = require("./routes/resource");
 const staff = require("./routes/staff");
@@ -21,10 +17,8 @@ const territory = require("./routes/territory");
 const user = require("./routes/user");
 const blogs = require("./routes/blogs.js");
 
-
+// Serve the 'uploads' directory as a static folder
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-
 
 app.use(morgan("dev"));
 app.use(cors());
@@ -41,17 +35,11 @@ app.use("/sponsor", sponsor);
 app.use("/user", user);
 app.use("/blogs", blogs);
 
-
-
-
-app.get("/global/states", (req, res) =>
-{
+app.get("/global/states", (req, res) => {
     const connection = database.getConnection();
 
-    connection.query('SELECT * FROM states', (error, results) =>
-    {
-        if (error)
-        {
+    connection.query('SELECT * FROM states', (error, results) => {
+        if (error) {
             console.error('Error executing query:', error);
             res.status(500).json({ error: 'Error executing query:', error });
             return;
@@ -60,19 +48,17 @@ app.get("/global/states", (req, res) =>
         // Process the query results
         res.json(results);
     });
-})
-app.get('/', (req, res) =>
-{
+});
+
+app.get('/', (req, res) => {
     res.send('Hello, World!');
 });
 
 const storage = multer.diskStorage({
-    destination: function (req, file, cb)
-    {
+    destination: function (req, file, cb) {
         cb(null, 'uploads/'); // Set the destination folder where files will be stored
     },
-    filename: function (req, file, cb)
-    {
+    filename: function (req, file, cb) {
         const fileName = Date.now() + '-' + file.originalname; // Generate a unique file name
         cb(null, fileName);
     },
@@ -81,13 +67,11 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Route to handle file/image upload
-app.post('/upload', upload.single('file'), (req, res) =>
-{
+app.post('/upload', upload.single('file'), (req, res) => {
     // Access the uploaded file details
     const uploadedFile = req.file;
 
-    if (!uploadedFile)
-    {
+    if (!uploadedFile) {
         // No file was uploaded
         res.status(400).json({ error: 'No file uploaded' });
         return;
@@ -106,13 +90,21 @@ app.post('/upload', upload.single('file'), (req, res) =>
     });
 });
 
-
-app.all('*', (req, res, next) =>
-{
-    res.status(400).json({
+// 404 Error handling middleware
+app.use((req, res, next) => {
+    res.status(404).json({
         error: true,
-        message: "can't find ${req.originalUrl} on this server",
-    })
+        message: `Cannot find ${req.originalUrl} on this server`,
+    });
 });
-module.exports = app;
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error('Error:', err);
+    res.status(err.status || 500).json({
+        error: true,
+        message: err.message || 'Internal Server Error',
+    });
+});
+
+module.exports = app;

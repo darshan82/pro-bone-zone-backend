@@ -1,9 +1,7 @@
-const catchAsync = require("../utils/catchAsync");
 const express = require('express');
 const router = express.Router();
 const controller = require("../controllers/customer")
 const { param, body } = require('express-validator');
-
 
 router.post('/', [
     body('territory_id').notEmpty().isInt().withMessage('Invalid territory ID'),
@@ -38,9 +36,6 @@ router.get('/:customerId', [
 router.get('/customer/:territory_id', [
     param('territory_id').notEmpty().isInt().withMessage('Invalid territory_id ID'),
 ], controller.getCustomerList);
-
-
-
 
 
 module.exports = router;

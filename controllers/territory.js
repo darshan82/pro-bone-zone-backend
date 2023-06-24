@@ -146,8 +146,17 @@ exports.query = (req, res) =>
     const connection = database.getConnection();
 
     const query = `
-      ALTER TABLE promotion
-      ADD COLUMN locked BOOLEAN NOT NULL DEFAULT false
+    CREATE TABLE blogs (
+        id INT PRIMARY KEY AUTO_INCREMENT,
+        category VARCHAR(255),
+        subcategory VARCHAR(255),
+        author VARCHAR(255),
+        title VARCHAR(255),
+        blog_text TEXT,
+        status VARCHAR(255) DEFAULT 'Pending',
+        updated TIMESTAMP,
+        edit_id INT
+      );
     `;
 
     connection.query(query, (error, result) =>

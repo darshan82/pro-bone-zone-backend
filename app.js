@@ -17,6 +17,8 @@ const staff = require("./routes/staff");
 const sponsor = require("./routes/sponsor");
 const territory = require("./routes/territory");
 const user = require("./routes/user");
+const blogs = require("./routes/blogs.js");
+
 
 
 
@@ -34,6 +36,8 @@ app.use("/staff", staff);
 app.use("/territory", territory);
 app.use("/sponsor", sponsor);
 app.use("/user", user);
+app.use("/blogs", blogs);
+
 
 
 

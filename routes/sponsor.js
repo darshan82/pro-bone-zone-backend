@@ -14,7 +14,6 @@ router.post('/add', [
     check('webpage').notEmpty().withMessage('Webpage is required'),
     check('email').notEmpty().withMessage('Email is required').isEmail().withMessage('Invalid email'),
     check('phone').notEmpty().withMessage('Phone is required'),
-    check('editId').notEmpty().withMessage('Edit ID is required'),
 ], controller.addSponsor);
 
 
@@ -41,7 +40,6 @@ router.put('/:id', [
     check('email').notEmpty().isEmail(),
     check('phone').notEmpty(),
     check('notes').notEmpty(),
-    check('editId').isInt().notEmpty()
 ], controller.updateSponsor);
 
 // GET /sponsor

@@ -2,13 +2,14 @@ const express = require('express');
 const router = express.Router();
 const controller = require("../controllers/promotion")
 const { check } = require('express-validator');
+const { verifyTheToken } = require('../middlewares/Auth');
 
 router.get('/detail/:promotionId', controller.getPromotionById)
 
-router.get('/', controller.getAllPromotions)
+router.get('/', verifyTheToken, controller.getAllPromotions)
 
-router.delete('/:id', controller.deletePromotion);
-router.put('/:id', [
+router.delete('/:id', verifyTheToken, controller.deletePromotion);
+router.put('/:id', verifyTheToken, [
     check('territoryId').isInt().notEmpty(),
     check('ptype').notEmpty(),
     check('pUrl').notEmpty(),
@@ -19,7 +20,7 @@ router.put('/:id', [
     check('attendees').optional({ nullable: true }).isInt(),
 ], controller.updatePromotion);
 
-router.post('/add', [
+router.post('/add', verifyTheToken, [
     check('territoryId').isInt().notEmpty(),
     check('ptype').notEmpty(),
     check('pUrl').notEmpty(),

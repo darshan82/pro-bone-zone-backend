@@ -26,13 +26,30 @@ exports.login = catchAsync(async (req, res, next) =>
             console.log("rows", rows)
             if (rows && rows.length === 1)
             {
-                const user = rows[0];
+                if (rows[0].permit === 'licensee')
+                    connection.query('SELECT * FROM territory WHERE `licensee-id` = ?', [rows[0].id], (error, rows2) =>
+                    {
+                        if (rows2.length)
+                        {
+                            const user = rows[0];
 
-                // Create a JWT with user data
-                const token = jwt.sign({ email: user.email, permit: user.permit, id: user.id }, config.jwt_secret);
+                            // Create a JWT with user data
+                            const token = jwt.sign({ user, territory: rows2[0] }, config.jwt_secret);
 
-                // Return the JWT as a response
-                res.json({ token, user });
+                            // Return the JWT as a response
+                            res.json({ token, user, territory: rows2[0] });
+                        }
+                    })
+                else
+                {
+                    const user = rows[0];
+
+                    // Create a JWT with user data
+                    const token = jwt.sign({ user }, config.jwt_secret);
+
+                    // Return the JWT as a response
+                    res.json({ token, user });
+                }
             } else
             {
                 res.status(401).json({ message: 'Invalid credentials', error: true });
@@ -128,8 +145,8 @@ exports.addLicensee = catchAsync(async (req, res, next) =>
     {
         return res.status(400).json({ errors: errors.array() });
     }
-    const { permit, name_first, name_last, phone, email, pass, notes, edit_id } = req.body;
-    const values = [permit, name_first, name_last, phone, email, pass, notes, edit_id];
+    const { permit, name_first, name_last, phone, email, pass, notes } = req.body;
+    const values = [permit, name_first, name_last, phone, email, pass, notes, req.userData?.user?.id];
     const connection = database.getConnection();
     const sql = 'INSERT INTO user (`permit`, `name-first`, `name-last`, `phone`, `email`, `pass`, `notes`, `edit-id`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
     connection.query(sql, values, (error, results) =>
@@ -153,8 +170,8 @@ exports.updateLicensee = catchAsync(async (req, res, next) =>
         return res.status(400).json({ errors: errors.array() });
     }
     const userId = req.params.id;
-    const { permit, name_first, name_last, phone, email, pass, notes, edit_id } = req.body;
-    const values = [name_first, name_last, phone, email, pass, notes, edit_id, userId, permit];
+    const { permit, name_first, name_last, phone, email, pass, notes, } = req.body;
+    const values = [name_first, name_last, phone, email, pass, notes, req.userData?.user?.id, userId, permit];
     const connection = database.getConnection();
     const sql = 'UPDATE user SET `name-first` = ?, `name-last` = ?, `phone` = ?, `email` = ?, `pass` = ?, `notes` = ?, `edit-id` = ? WHERE `id` = ? AND `permit` = ?';
     connection.query(sql, values, (error, results) =>

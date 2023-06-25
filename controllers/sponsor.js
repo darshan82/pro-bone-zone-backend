@@ -24,7 +24,6 @@ exports.addSponsor = (req, res) =>
     email,
     phone,
     notes,
-    editId,
   } = req.body;
 
   // Prepare the SQL query and parameter values
@@ -42,7 +41,7 @@ exports.addSponsor = (req, res) =>
     phone,
     notes,
     new Date(),
-    editId,
+    req.userData?.user?.id,
   ];
 
   // Execute the query
@@ -140,7 +139,6 @@ exports.updateSponsor = catchAsync(async (req, res, next) =>
     email,
     phone,
     notes,
-    editId
   } = req.body;
 
   const errors = validationResult(req);
@@ -163,7 +161,7 @@ exports.updateSponsor = catchAsync(async (req, res, next) =>
     email,
     phone,
     notes,
-    editId,
+    req.userData?.user?.id,
     sponsorId
   ];
 
@@ -216,7 +214,6 @@ exports.getSponsors = catchAsync(async (req, res, next) =>
       phone: sponsor.phone,
       notes: sponsor.notes,
       updated: sponsor.updated,
-      editId: sponsor['edit-id'],
       country: sponsor.country,
       state: sponsor.state,
       county: sponsor.county,

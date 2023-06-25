@@ -22,7 +22,6 @@ router.put('/:id', [
     check('street2'),
     check('street3'),
     check('attendees').isInt().notEmpty(),
-    check('edit_id').isInt().notEmpty(),
 ], controller.updateEvent);
 
 // Add a new event
@@ -38,7 +37,6 @@ router.post('/', [
     body('street2'),
     body('street3'),
     body('attendees').isInt().notEmpty(),
-    body('edit_id').isInt().notEmpty(),
 ], controller.addEvent);
 
 module.exports = router;

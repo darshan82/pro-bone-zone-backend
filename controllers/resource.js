@@ -10,8 +10,8 @@ exports.addResource = (req, res) =>
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const { category, title, viewers, type, filepath, status, editId } = req.body;
-  const values = [category, title, viewers, type, filepath, status, editId];
+  const { category, title, viewers, type, filepath, status } = req.body;
+  const values = [category, title, viewers, type, filepath, status, req.userData?.user?.id];
 
   const connection = database.getConnection();
   const sql = 'INSERT INTO resource (`category`, `title`, `viewers`, `type`, `filepath`, `status`, `edit-id`) VALUES (?, ?, ?, ?, ?, ?, ?)';
@@ -71,7 +71,7 @@ exports.updateResource = catchAsync(async (req, res, next) => {
 
 
   const sql = `UPDATE resource SET category = ?, title = ?, viewers = ?, type = ?, filepath = ?, status = ?, \`edit-id\` = ? WHERE id = ?`;
-  const values = [category, title, viewers, type, filepath, status, editId, resourceId];
+  const values = [category, title, viewers, type, filepath, status, req.userData?.user?.id, resourceId];
 
   connection.query(sql, values, (error, results) => {
     if (error) {

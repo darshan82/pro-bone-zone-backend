@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const config = require("./../config");
 
-const verifyTheToken = (req, res, next) =>
+exports.verifyTheToken = (req, res, next) =>
 {
   const bearer = req.headers["authorization"];
   if (!bearer)
@@ -11,14 +11,13 @@ const verifyTheToken = (req, res, next) =>
       message: "No token provided",
     });
   }
-
-  const bearerToken = bearer.split(" ");
-  const token = bearerToken[1];
+  const token = bearer
 
   jwt.verify(token, config.jwt_secret, (err, data) =>
   {
     if (err)
     {
+      console.log(err)
       if (err.name === "TokenExpiredError")
       {
         return res.status(400).json({
@@ -33,9 +32,9 @@ const verifyTheToken = (req, res, next) =>
       });
     }
 
+    console.log("req.userData", data)
     req.userData = data;
     next();
   });
 };
 
-module.exports = verifyTheToken;

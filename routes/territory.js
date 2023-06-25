@@ -10,8 +10,7 @@ router.post('/add', [
     check('state').notEmpty(),
     check('county').notEmpty(),
     check('defaultUrl').notEmpty(),
-    check('notes'),
-    check('editId').isInt().notEmpty()
+    check('notes').notEmpty(),
 ], controller.addTerritory);
 
 
@@ -22,7 +21,7 @@ router.put('/update/:id', [
     check('state').notEmpty(),
     check('county').notEmpty(),
     check('defaultUrl').notEmpty(),
-    check('notes'),
+    check('notes').notEmpty(),
 ], controller.updateTerritory);
 router.delete('/delete/:id', controller.deleteTerritory);
 

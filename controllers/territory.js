@@ -35,10 +35,10 @@ exports.addTerritory = catchAsync(async (req, res, next) =>
     {
         return res.status(400).json({ errors: errors.array() });
     }
-    const { licenseeId, state, county, defaultUrl, notes, editId } = req.body;
-    const values = [licenseeId, state, county, defaultUrl, notes, editId];
+    const { licenseeId, state, county, defaultUrl, notes, } = req.body;
+    const values = [licenseeId, state, county, defaultUrl, notes, req.userData?.user?.id, "USA"];
     const connection = database.getConnection();
-    const sql = 'INSERT INTO territory (`licensee-id`, `state`, `county`, `default-url`,`notes`, `edit-id`) VALUES (?, ?, ?, ?, ?, ?)';
+    const sql = 'INSERT INTO territory (`licensee-id`, `state`, `county`, `default-url`,`notes`, `edit-id`,`country`) VALUES (?, ?, ?, ?, ?, ?,?)';
     connection.query(sql, values, (error, results) =>
     {
         if (error)
@@ -63,7 +63,7 @@ exports.updateTerritory = catchAsync(async (req, res, next) =>
     }
     const territoryId = req.params.id;
     const { licenseeId, state, county, defaultUrl, notes, editId } = req.body;
-    const values = [licenseeId, state, county, defaultUrl, notes, 0, territoryId];
+    const values = [licenseeId, state, county, defaultUrl, notes, req.userData?.user?.id, territoryId];
     const connection = database.getConnection();
     const sql = 'UPDATE territory SET `licensee-id` = ?, `state` = ?, `county` = ?, `default-url` = ?, `notes` = ?, `edit-id` = ? WHERE `id` = ?';
     connection.query(sql, values, (error, results) =>

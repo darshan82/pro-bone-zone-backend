@@ -377,6 +377,21 @@ CREATE TABLE `user` (
   `edit-id` int(11) UNSIGNED NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+CREATE TABLE `territory` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `licensee-id` int(11) UNSIGNED NOT NULL,
+  `country` varchar(30) NOT NULL DEFAULT 'USA',
+  `state` varchar(20) NOT NULL,
+  `county` varchar(30) NOT NULL,
+  `default-url` varchar(50) NOT NULL,
+  `notes` text NOT NULL,
+  `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `edit-id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 CREATE TABLE `territory` (
   `id` int(11) UNSIGNED NOT NULL,
   `licensee-id` int(11) UNSIGNED NOT NULL,

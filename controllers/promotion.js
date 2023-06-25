@@ -229,14 +229,13 @@ exports.updatePromotion = catchAsync(async (req, res, next) =>
     eventId3,
     eventId4,
     attendees,
-    editId,
     locked
   } = req.body;
 
   const connection = database.getConnection();
   const sql = 'UPDATE promotion SET `territory-id` = ?, `ptype` = ?, `p-url` = ?, `event1-id` = ?, `event2-id` = ?, `event3-id` = ?, `event4-id` = ?, `attendees` = ?, `edit-id` = ?, `locked` = ? WHERE `id` = ?';
 
-  const values = [territoryId, ptype, pUrl, eventId1, eventId2, eventId3, eventId4, attendees, 1, locked, promotionId];
+  const values = [territoryId, ptype, pUrl, eventId1, eventId2, eventId3, eventId4, attendees, req.userData?.user?.id, locked, promotionId];
   console.log(values);
 
   connection.query(sql, values, (error, results) =>
@@ -276,7 +275,6 @@ exports.addPromotion = catchAsync(async (req, res, next) =>
     eventId3,
     eventId4,
     attendees,
-    editId,
     locked
   } = req.body;
 
@@ -289,7 +287,7 @@ exports.addPromotion = catchAsync(async (req, res, next) =>
     eventId3,
     eventId4,
     attendees,
-    1,
+    req.userData?.user?.id,
     locked,
   ];
 

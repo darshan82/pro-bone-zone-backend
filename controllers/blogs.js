@@ -27,9 +27,9 @@ exports.addBlog = (req, res) =>
     {
         return res.status(400).json({ errors: errors.array() });
     }
-
+    console.log(req.userData)
     const { category, subcategory, author, title, blog_text, edit_id } = req.body;
-    const values = [category, subcategory, author, title, blog_text, edit_id];
+    const values = [category, subcategory, author, title, blog_text, req.userData?.user?.id];
     const connection = database.getConnection();
     const sql =
         'INSERT INTO blogs (category, subcategory, author, title, blog_text, edit_id) VALUES (?, ?, ?, ?, ?, ?)';
@@ -55,10 +55,10 @@ exports.updateBlog = (req, res) =>
 
     const blogId = req.params.id;
     const { category, subcategory, author, title, blog_text } = req.body;
-    const values = [category, subcategory, author, title, blog_text, blogId];
+    const values = [category, subcategory, author, title, blog_text, req.userData?.user?.id, blogId];
     const connection = database.getConnection();
     const sql =
-        'UPDATE blogs SET category = ?, subcategory = ?, author = ?, title = ?, blog_text = ? WHERE id = ?';
+        'UPDATE blogs SET category = ?, subcategory = ?, author = ?, title = ?, blog_text = ?, edit_id = ? WHERE id = ?';
     connection.query(sql, values, (error, results) =>
     {
         if (error)

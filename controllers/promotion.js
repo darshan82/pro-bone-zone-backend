@@ -32,7 +32,7 @@ exports.getPromotionById = catchAsync(async (req, res, next) =>
         promotionData?.['event2-id'],
         promotionData?.['event3-id'],
         promotionData?.['event4-id']
-      ].filter(Boolean); // Filter out any null/undefined event IDs
+      ]?.filter(Boolean); // Filter out any null/undefined event IDs
 
       if (eventIds.length === 0)
       {

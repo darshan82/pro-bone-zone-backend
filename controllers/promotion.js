@@ -28,10 +28,10 @@ exports.getPromotionById = catchAsync(async (req, res, next) =>
       const promotionData = promotionResults[0]; // Assuming there is only one promotion with the given ID
 
       const eventIds = [
-        promotionData['event1-id'],
-        promotionData['event2-id'],
-        promotionData['event3-id'],
-        promotionData['event4-id']
+        promotionData?.['event1-id'],
+        promotionData?.['event2-id'],
+        promotionData?.['event3-id'],
+        promotionData?.['event4-id']
       ].filter(Boolean); // Filter out any null/undefined event IDs
 
       if (eventIds.length === 0)

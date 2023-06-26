@@ -8,10 +8,12 @@ const catchAsync = require("../utils/catchAsync");
 
 exports.getPromotionById = catchAsync(async (req, res, next) =>
 {
-  const promotionId = req.params.promotionId; // Assuming you pass the promotion ID as a URL parameter
-
+  try {
+    
+    const promotionId = req.params.promotionId; // Assuming you pass the promotion ID as a URL parameter
+    
   const connection = database.getConnection();
-
+  
   connection.query(
     `SELECT * FROM promotion WHERE id = ${promotionId}`,
     (error, promotionResults) =>
@@ -87,10 +89,13 @@ exports.getPromotionById = catchAsync(async (req, res, next) =>
             res.json(promotionWithEvents);
           }
         }
+        );
+      }
       );
+    } catch (error) {
+      
     }
-  );
-});
+    });
 
 
 exports.getAllPromotions = catchAsync(async (req, res, next) =>

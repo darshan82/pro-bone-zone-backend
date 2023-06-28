@@ -2,13 +2,17 @@ const express = require('express');
 const controller = require("../controllers/appointment")
 
 const { body, param, query } = require("express-validator");
+const { verifyTheToken } = require('../middlewares/Auth');
 
 const router = express.Router();
 
 
 router.get('/', [
     query('eventId').notEmpty().isInt().withMessage('Invalid event ID')
-], controller.getAppointmentsByEventId);
+],
+    verifyTheToken
+    ,
+    controller.getAppointmentsByEventId);
 
 router.post('/add',
     [
@@ -22,14 +26,15 @@ router.post('/add',
         body('description').isString(),
         body('promotionId').notEmpty().withMessage('Promotion ID is required'),
         body('eventId').notEmpty().withMessage('Event ID is required'),
-
     ]
     , controller.addAppointments);
 
 router.delete('/delete/:id', [
     param('id').notEmpty().withMessage('Appointment ID is required'),
-
-], controller.deleteAppointment);
+],
+    verifyTheToken
+    ,
+    controller.deleteAppointment);
 
 
 router.put('/:id/:customerId',
@@ -39,7 +44,10 @@ router.put('/:id/:customerId',
         param('id').notEmpty().withMessage('id is required in params'),
         body('lastName').notEmpty().withMessage('Last name is required'),
         body('timeslot').notEmpty().withMessage('Timeslot is required'),
-    ], controller.updateAppointement)
+    ],
+    verifyTheToken
+    ,
+    controller.updateAppointement)
 
 
 module.exports = router;

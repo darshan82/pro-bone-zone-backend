@@ -26,8 +26,27 @@ exports.addAppointments = catchAsync(async (req, res, next) =>
 
     const connection = database.getConnection();
 
+    const getTerritoryIdQuery = 'SELECT \`territory-id\` FROM promotion WHERE id = ?';
+
+    const results = await new Promise((resolve, reject) =>
+    {
+        connection.query(getTerritoryIdQuery, [promotionId], (error, results) =>
+        {
+            if (error)
+            {
+                reject(error);
+            } else
+            {
+                resolve(results);
+            }
+        });
+    });
+
+    const territoryId = results[0]['territory-id']
+
+    console.log(`Territory ${territoryId}`)
     // Step 1: Insert data into the customer table
-    const customerValues = [firstName, lastName, email, phone, 100, description];
+    const customerValues = [firstName, lastName, email, phone, territoryId, description];
     const customerSql =
         'INSERT INTO customer (`name-first`, `name-last`, `email`, `phone`,`territory_id`,`notes`) VALUES (?, ?, ?, ?,?,?)';
 

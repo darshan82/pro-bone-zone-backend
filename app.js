@@ -25,7 +25,7 @@ app.use(morgan("dev"));
 app.use(cors());
 app.use(express.json());
 
-app.use("/appointment", verifyTheToken, appointment);
+app.use("/appointment", appointment);
 app.use("/customer", verifyTheToken, customer);
 app.use("/event", verifyTheToken, event);
 app.use("/promotion", promotion);

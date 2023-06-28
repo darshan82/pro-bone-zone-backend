@@ -39,7 +39,7 @@ exports.login = catchAsync(async (req, res, next) =>
                                 const token = jwt.sign({ user, territory: rows2[0] }, config.jwt_secret);
 
                                 // Return the JWT as a response
-                                res.json({ token, user, territory: rows2[0] });
+                                res.json({ token, user: { ...user, territory: rows2[0] }, });
                             }
                         })
                     else if (rows[0].permit === 'staff')
@@ -66,7 +66,7 @@ exports.login = catchAsync(async (req, res, next) =>
                                                     { user, territory },
                                                     config.jwt_secret
                                                 );
-                                                res.json({ token, user, territory });
+                                                res.json({ token, user: { ...user, territory: territory } });
                                             }
                                         }
                                     );

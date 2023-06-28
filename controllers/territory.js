@@ -181,7 +181,7 @@ exports.query = (req, res) =>
     const connection = database.getConnection();
 
     const query = `
-    ALTER TABLE staff MODIFY id INT AUTO_INCREMENT PRIMARY KEY;
+    UPDATE availability SET event_id = 5 WHERE event_id = 1;
     `;
 
     connection.query(query, (error, result) =>

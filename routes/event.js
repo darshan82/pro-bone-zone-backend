@@ -8,6 +8,8 @@ router.get('/', controller.event);
 
 // Delete an event
 router.delete('/:id', controller.deleteEvent);
+router.get('/:id', controller.getEventById);
+
 
 // Update an event
 router.put('/:id', [

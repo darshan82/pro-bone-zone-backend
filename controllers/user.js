@@ -42,6 +42,38 @@ exports.login = catchAsync(async (req, res, next) =>
                                 res.json({ token, user, territory: rows2[0] });
                             }
                         })
+                    else if (rows[0].permit === 'staff')
+                    {
+                        connection.query(
+                            'SELECT * FROM staff WHERE `user-id` = ?',
+                            [rows[0].id],
+                            (error, rows4) =>
+                            {
+                                if (rows4.length)
+                                {
+                                    const staffRow = rows4[0];
+                                    const territoryId = staffRow['territory-id'];
+                                    connection.query(
+                                        'SELECT * FROM territory WHERE id = ?',
+                                        [territoryId],
+                                        (error, rows5) =>
+                                        {
+                                            if (rows5.length)
+                                            {
+                                                const territory = rows5[0];
+                                                const user = rows[0];
+                                                const token = jwt.sign(
+                                                    { user, territory },
+                                                    config.jwt_secret
+                                                );
+                                                res.json({ token, user, territory });
+                                            }
+                                        }
+                                    );
+                                }
+                            }
+                        );
+                    }
                     else
                     {
                         const user = rows[0];

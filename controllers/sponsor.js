@@ -187,42 +187,80 @@ exports.updateSponsor = catchAsync(async (req, res, next) =>
 exports.getSponsors = catchAsync(async (req, res, next) =>
 {
   const connection = database.getConnection();
+  const territoryId = req?.userData?.territory?.id ?? null;
 
-  const sql =
-    'SELECT sponsor.*, territory.country, territory.state, territory.county, territory.\`default-url\` FROM sponsor JOIN territory ON sponsor.territory_id = territory.id';
+  let sql = 'SELECT sponsor.*, territory.country, territory.state, territory.county, territory.`default-url` FROM sponsor JOIN territory ON sponsor.territory_id = territory.id';
 
-  connection.query(sql, (error, results) =>
+  if (territoryId)
   {
-    if (error)
+    sql += ' WHERE sponsor.territory_id = ?';
+    connection.query(sql, [territoryId], (error, results) =>
     {
-      console.error('Error executing query:', error);
-      return res.status(500).json({ error: 'Error executing query' });
-    }
+      if (error)
+      {
+        console.error('Error executing query:', error);
+        return res.status(500).json({ error: 'Error executing query' });
+      }
 
-    // Process the query results
-    const sponsors = results.map((sponsor) => ({
-      id: sponsor.id,
-      territoryId: sponsor.territory_id,
-      scategory: sponsor.scategory,
-      stype: sponsor.stype,
-      organizationName: sponsor['organization-name'],
-      webpage: sponsor.webpage,
-      logo: sponsor.logo,
-      description: sponsor.description,
-      contactName: sponsor['contact-name'],
-      email: sponsor.email,
-      phone: sponsor.phone,
-      notes: sponsor.notes,
-      updated: sponsor.updated,
-      country: sponsor.country,
-      state: sponsor.state,
-      county: sponsor.county,
-      defaultUrl: sponsor['default-url'],
-    }));
+      // Process the query results
+      const sponsors = results.map((sponsor) => ({
+        id: sponsor.id,
+        territoryId: sponsor.territory_id,
+        scategory: sponsor.scategory,
+        stype: sponsor.stype,
+        organizationName: sponsor['organization-name'],
+        webpage: sponsor.webpage,
+        logo: sponsor.logo,
+        description: sponsor.description,
+        contactName: sponsor['contact-name'],
+        email: sponsor.email,
+        phone: sponsor.phone,
+        notes: sponsor.notes,
+        updated: sponsor.updated,
+        country: sponsor.country,
+        state: sponsor.state,
+        county: sponsor.county,
+        defaultUrl: sponsor['default-url'],
+      }));
 
-    res.json(sponsors);
-  });
+      res.json(sponsors);
+    });
+  } else
+  {
+    connection.query(sql, (error, results) =>
+    {
+      if (error)
+      {
+        console.error('Error executing query:', error);
+        return res.status(500).json({ error: 'Error executing query' });
+      }
+
+      // Process the query results
+      const sponsors = results.map((sponsor) => ({
+        id: sponsor.id,
+        territoryId: sponsor.territory_id,
+        scategory: sponsor.scategory,
+        stype: sponsor.stype,
+        organizationName: sponsor['organization-name'],
+        webpage: sponsor.webpage,
+        logo: sponsor.logo,
+        description: sponsor.description,
+        contactName: sponsor['contact-name'],
+        email: sponsor.email,
+        phone: sponsor.phone,
+        notes: sponsor.notes,
+        updated: sponsor.updated,
+        country: sponsor.country,
+        state: sponsor.state,
+        county: sponsor.county,
+        defaultUrl: sponsor['default-url'],
+      }));
+
+      res.json(sponsors);
+    });
+  }
 });
+
 
 
 

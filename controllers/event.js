@@ -5,7 +5,15 @@ exports.event = catchAsync(async (req, res, next) =>
 {
     const connection = database.getConnection();
 
-    connection.query('SELECT * FROM event', (error, results) =>
+    let query = 'SELECT * FROM event';
+    const territoryId = req?.userData?.territory?.id ?? null
+    console.log(territoryId)
+    if (territoryId)
+    {
+        query += ` WHERE territory_id = ${territoryId}`;
+    }
+
+    connection.query(query, (error, results) =>
     {
         if (error)
         {
@@ -17,7 +25,8 @@ exports.event = catchAsync(async (req, res, next) =>
         // Process the query results
         res.json(results);
     });
-})
+});
+
 
 
 exports.deleteEvent = catchAsync(async (req, res) =>
@@ -96,5 +105,29 @@ exports.addEvent = catchAsync(async (req, res) =>
 
         // Return success response
         return res.status(200).json({ message: 'Event added successfully' });
+    });
+});
+exports.getEventById = catchAsync(async (req, res, next) =>
+{
+    const eventId = req.params.id;
+    const connection = database.getConnection();
+
+    const query = 'SELECT * FROM event WHERE id = ?';
+    connection.query(query, [eventId], (error, results) =>
+    {
+        if (error)
+        {
+            console.error('Error executing query:', error);
+            return res.status(500).json({ error: 'Error executing query:', error });
+        }
+
+        // Check if any rows were returned
+        if (results.length === 0)
+        {
+            return res.status(404).json({ error: 'Event not found' });
+        }
+
+        // Return the event
+        res.json(results[0]);
     });
 });

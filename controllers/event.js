@@ -62,7 +62,7 @@ exports.updateEvent = catchAsync(async (req, res) =>
     const { territory_id, etype, edate, capacity, time_start, time_end, city, street1, street2, street3, edit_id } = req.body;
 
     const connection = database.getConnection();
-    const sql = 'UPDATE event SET territory_id = ?, etype = ?, edate = ?, capacity = ?, `time-start` = ?, `time-end` = ?, city = ?, street1 = ?, street2 = ?, street3 = ?, attendees = ?, edit_id = ? WHERE id = ?';
+    const sql = 'UPDATE event SET territory_id = ?, etype = ?, edate = ?, capacity = ?, `time-start` = ?, `time-end` = ?, city = ?, street1 = ?, street2 = ?, street3 = ?, edit_id = ? WHERE id = ?';
 
     const values = [territory_id, etype, edate, capacity, time_start, time_end, city, street1, street2, street3, edit_id, eventId];
 

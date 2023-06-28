@@ -17,7 +17,6 @@ router.put('/:id', verifyTheToken, [
     check('eventId2').optional({ nullable: true }).isInt(),
     check('eventId3').optional({ nullable: true }).isInt(),
     check('eventId4').optional({ nullable: true }).isInt(),
-    check('attendees').optional({ nullable: true }).isInt(),
 ], controller.updatePromotion);
 
 router.post('/add', verifyTheToken, [
@@ -28,7 +27,6 @@ router.post('/add', verifyTheToken, [
     check('eventId2').optional({ nullable: true }).isInt(),
     check('eventId3').optional({ nullable: true }).isInt(),
     check('eventId4').optional({ nullable: true }).isInt(),
-    check('attendees').optional({ nullable: true }).isInt(),
 ], controller.addPromotion);
 
 module.exports = router;

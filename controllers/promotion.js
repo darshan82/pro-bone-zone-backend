@@ -244,14 +244,13 @@ exports.updatePromotion = catchAsync(async (req, res, next) =>
     eventId2,
     eventId3,
     eventId4,
-    attendees,
     locked
   } = req.body;
 
   const connection = database.getConnection();
-  const sql = 'UPDATE promotion SET `territory-id` = ?, `ptype` = ?, `p-url` = ?, `event1-id` = ?, `event2-id` = ?, `event3-id` = ?, `event4-id` = ?, `attendees` = ?, `edit-id` = ?, `locked` = ? WHERE `id` = ?';
+  const sql = 'UPDATE promotion SET `territory-id` = ?, `ptype` = ?, `p-url` = ?, `event1-id` = ?, `event2-id` = ?, `event3-id` = ?, `event4-id` = ?, `edit-id` = ?, `locked` = ? WHERE `id` = ?';
 
-  const values = [territoryId, ptype, pUrl, eventId1, eventId2, eventId3, eventId4, attendees, req.userData?.user?.id, locked, promotionId];
+  const values = [territoryId, ptype, pUrl, eventId1, eventId2, eventId3, eventId4, req.userData?.user?.id, locked, promotionId];
   console.log(values);
 
   connection.query(sql, values, (error, results) =>
@@ -290,7 +289,6 @@ exports.addPromotion = catchAsync(async (req, res, next) =>
     eventId2,
     eventId3,
     eventId4,
-    attendees,
     locked
   } = req.body;
 
@@ -302,13 +300,12 @@ exports.addPromotion = catchAsync(async (req, res, next) =>
     eventId2,
     eventId3,
     eventId4,
-    attendees,
     req.userData?.user?.id,
     locked,
   ];
 
   const connection = database.getConnection();
-  const sql = 'INSERT INTO promotion (`territory-id`, `ptype`, `p-url`, `event1-id`, `event2-id`, `event3-id`, `event4-id`, `attendees`, `edit-id`,`locked`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)';
+  const sql = 'INSERT INTO promotion (`territory-id`, `ptype`, `p-url`, `event1-id`, `event2-id`, `event3-id`, `event4-id`, `edit-id`,`locked`) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)';
 
   connection.query(sql, values, (error, results) =>
   {

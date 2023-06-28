@@ -9,12 +9,12 @@ const validateResourceId = param('id').notEmpty().isInt().withMessage('Resource 
 
 // Validation rules for creating/updating a resource
 const validateResource = [
-    body('category').notEmpty().isIn(['marketing', 'training', 'technology']).withMessage('Category must be one of: marketing, training, technology'),
+    body('category').notEmpty().withMessage('Category must be one of: marketing, training, technology'),
     body('title').notEmpty(),
     body('viewers').notEmpty(),
-    body('type').notEmpty().isIn(['file', 'link', 'video']).withMessage('Type must be one of: file, link, video'),
+    body('type').notEmpty().withMessage('Type must be one of: file, link, video'),
     body('filepath').notEmpty(),
-    body('status').notEmpty().isIn(['pending', 'live']).withMessage('Status must be one of: pending, live'),
+    body('status').notEmpty().withMessage('Status must be one of: pending, live'),
 ];
 
 router.post('/add', validateResource, controller.addResource)

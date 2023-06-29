@@ -58,12 +58,12 @@ exports.deleteEvent = catchAsync(async (req, res) =>
 exports.updateEvent = catchAsync(async (req, res) =>
 {
     const eventId = req.params.id;
-    const { territory_id, etype, edate, capacity, time_start, time_end, city, street1, street2, street3 } = req.body;
+    const { state,territory_id, etype, edate, capacity, time_start, time_end, city, street1, street2, street3 } = req.body;
 
     const connection = database.getConnection();
-    const sql = 'UPDATE event SET territory_id = ?, etype = ?, edate = ?, capacity = ?, `time-start` = ?, `time-end` = ?, city = ?, street1 = ?, street2 = ?, street3 = ?, edit_id = ? WHERE id = ?';
+    const sql = 'UPDATE event SET state = ?,territory_id = ?, etype = ?, edate = ?, capacity = ?, `time-start` = ?, `time-end` = ?, city = ?, street1 = ?, street2 = ?, street3 = ?, edit_id = ? WHERE id = ?';
 
-    const values = [territory_id, etype, edate, capacity, time_start, time_end, city, street1, street2, street3, req.userData?.user?.id, , eventId];
+    const values = [state,territory_id, etype, edate, capacity, time_start, time_end, city, street1, street2, street3, req.userData?.user?.id, , eventId];
 
     connection.query(sql, values, (error, results) =>
     {
@@ -86,12 +86,12 @@ exports.updateEvent = catchAsync(async (req, res) =>
 // Add an event
 exports.addEvent = catchAsync(async (req, res) =>
 {
-    const { territory_id, etype, edate, capacity, time_start, time_end, city, street1, street2, street3 } = req.body;
+    const { state,territory_id, etype, edate, capacity, time_start, time_end, city, street1, street2, street3 } = req.body;
 
     const connection = database.getConnection();
-    const sql = 'INSERT INTO event (territory_id, etype, edate, capacity, `time-start`, `time-end`, city, street1, street2, street3, edit_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    const sql = 'INSERT INTO event (state,territory_id, etype, edate, capacity, `time-start`, `time-end`, city, street1, street2, street3, edit_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
-    const values = [territory_id, etype, edate, capacity, time_start, time_end, city, street1, street2, street3, req.userData?.user?.id];
+    const values = [state,territory_id, etype, edate, capacity, time_start, time_end, city, street1, street2, street3, req.userData?.user?.id];
 
     connection.query(sql, values, (error, results) =>
     {

@@ -20,6 +20,7 @@ router.put('/:id', [
     check('time-start').notEmpty(),
     check('time-end').notEmpty(),
     check('city').notEmpty(),
+    body('state').notEmpty(),
     check('street1').notEmpty(),
     check('street2'),
     check('street3'),
@@ -35,6 +36,7 @@ router.post('/', [
     body('time-end').notEmpty(),
     body('city').notEmpty(),
     body('street1').notEmpty(),
+    body('state').notEmpty(),
     body('street2'),
     body('street3'),
 ], controller.addEvent);

@@ -36,7 +36,7 @@ router.post('/licensee/add', verifyTheToken, [
 
 // Update licensee route
 router.put('/licensee/update/:id', verifyTheToken, [
-    check('permit').notEmpty().withMessage('Permit is required').isIn(['licensee', 'staff']).withMessage('Invalid permit value'),
+    check('permit').notEmpty().withMessage('Permit is required').isIn(['licensee', 'staff', "admin"]).withMessage('Invalid permit value'),
     check('name_first').notEmpty(),
     check('name_last').notEmpty(),
     check('phone').notEmpty(),

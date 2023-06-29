@@ -199,7 +199,7 @@ exports.getCustomerList = async (req, res) =>
 
             if (results.length === 0)
             {
-                return res.status(404).json({ error: 'Customer not found' });
+                return res.status(400).json({ error: 'Customer not found' });
             }
 
             const uniqueEmails = {};

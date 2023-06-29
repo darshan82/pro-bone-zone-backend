@@ -129,7 +129,6 @@ exports.signup = catchAsync(async (req, res,) =>
             email,
             pass,
             notes,
-            territoryId
         } = req.body;
         // Query the database to check if the user already exists
         connection.query('SELECT * FROM user WHERE email = ?', [email], (error, rows) =>
@@ -156,6 +155,8 @@ exports.signup = catchAsync(async (req, res,) =>
 
                 if (permit === "staff")
                 {
+                    const territoryId = req?.userData?.territory?.id ?? null
+
                     connection.query('INSERT INTO staff (`id`,`territory-id`, `user-id`) VALUES (?,?, ?)', [
                         rowz.insertId,
                         territoryId,

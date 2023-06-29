@@ -18,8 +18,7 @@ router.post('/signup', [
     body('phone').notEmpty().withMessage('Phone number is required'),
     body('email').isEmail().withMessage('Invalid email'),
     body('pass').notEmpty().withMessage('Password is required'),
-    body('territoryId').notEmpty().withMessage('Territory ID is required')
-], controller.signup);
+], verifyTheToken, controller.signup);
 
 // Get all licensees route
 router.get('/licensee', verifyTheToken, controller.getAllLicensees);

@@ -176,7 +176,7 @@ exports.getCustomerList = async (req, res) =>
         return res.status(400).json({ errors: errors.array() });
     }
 
-    const territory_id = req?.params?.territory_id;
+    const territory_id = req?.userData?.territory?.id ?? null;
 
     try
     {

@@ -27,13 +27,13 @@ router.delete('/:customerId', [
     param('customerId').notEmpty().isInt().withMessage('Invalid customer ID'),
 ], controller.deleteCustomer);
 
+router.get('/', controller.getCustomerList);
 
 // Get a single customer by ID
 router.get('/:customerId', [
     param('customerId').notEmpty().isInt().withMessage('Invalid customer ID'),
 ], controller.getCustomer);
 
-router.get('/customer/:territory_id', controller.getCustomerList);
 
 
 module.exports = router;

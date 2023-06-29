@@ -176,14 +176,20 @@ exports.getCustomerList = async (req, res) =>
         return res.status(400).json({ errors: errors.array() });
     }
 
-    const territory_id = req.params.territory_id;
+    const territory_id = req?.params?.territory_id;
 
     try
     {
         const connection = database.getConnection();
-        const sql = 'SELECT * FROM customer WHERE `territory_id` = ?';
-        const values = [territory_id];
-        connection.query(sql, values, (error, results) =>
+        let sql = 'SELECT * FROM customer';
+
+        // Check if territory_id is provided
+        if (territory_id)
+        {
+            sql += ' WHERE territory_id = ?';
+        }
+
+        connection.query(sql, [territory_id], (error, results) =>
         {
             if (error)
             {
@@ -196,8 +202,21 @@ exports.getCustomerList = async (req, res) =>
                 return res.status(404).json({ error: 'Customer not found' });
             }
 
-            const customer = results
-            return res.status(200).json({ customer });
+            const uniqueEmails = {};
+            const customers = [];
+
+            for (const customer of results)
+            {
+                if (!customer.email || uniqueEmails[customer.email])
+                {
+                    continue;
+                }
+
+                uniqueEmails[customer.email] = true;
+                customers.push(customer);
+            }
+
+            return res.status(200).json({ customers });
         });
     } catch (error)
     {
@@ -205,3 +224,4 @@ exports.getCustomerList = async (req, res) =>
         return res.status(500).json({ error: 'Internal server error' });
     }
 };
+

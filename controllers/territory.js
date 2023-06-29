@@ -181,7 +181,7 @@ exports.query = (req, res) =>
 {
     const connection = database.getConnection();
 
-    const query = "ALTER TABLE event ADD COLUMN state varchar(50) DEFAULT NULL AFTER street3;";
+    const query = "UPDATE promotion SET attendees = 0 WHERE attendees IS NULL";
 
     connection.query(query, (error, result) =>
     {

@@ -33,9 +33,7 @@ router.get('/:customerId', [
     param('customerId').notEmpty().isInt().withMessage('Invalid customer ID'),
 ], controller.getCustomer);
 
-router.get('/customer/:territory_id', [
-    param('territory_id').notEmpty().isInt().withMessage('Invalid territory_id ID'),
-], controller.getCustomerList);
+router.get('/customer/:territory_id', controller.getCustomerList);
 
 
 module.exports = router;

@@ -27,7 +27,6 @@ exports.getPromotionById = catchAsync(async (req, res, next) =>
         }
 
         const promotionData = promotionResults[0]; // Assuming there is only one promotion with the given ID
-
         const eventIds = [
           promotionData?.['event1-id'],
           promotionData?.['event2-id'],

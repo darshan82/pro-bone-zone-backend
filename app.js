@@ -88,7 +88,7 @@ app.post('/upload', upload.single('file'), (req, res) =>
     }
 
     // File/image was successfully uploaded
-    const filePath = path.join(__dirname, 'uploads', uploadedFile.filename);
+    const filePath = path.join('uploads', uploadedFile.filename);
     res.json({
         message: 'File uploaded successfully',
         file: {

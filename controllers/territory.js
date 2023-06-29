@@ -181,7 +181,9 @@ exports.query = (req, res) =>
     const connection = database.getConnection();
 
     const query = `
-    UPDATE availability SET event_id = 5 WHERE event_id = 1;
+    ALTER TABLE event
+MODIFY COLUMN attendees INT NOT NULL DEFAULT 0;
+
     `;
 
     connection.query(query, (error, result) =>

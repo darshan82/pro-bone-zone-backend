@@ -25,7 +25,6 @@ exports.login = catchAsync(async (req, res, next) =>
                 // Query the database to check if user exists
 
                 // Check if a matching user is found
-                console.log("rows", rows)
                 if (rows && rows.length === 1)
                 {
                     if (rows[0].permit === 'licensee')
@@ -41,9 +40,16 @@ exports.login = catchAsync(async (req, res, next) =>
                                 // Return the JWT as a response
                                 res.json({ token, user: { ...user, territory: rows2[0] }, });
                             }
+                            else
+                            {
+                                res.status(401).json({ message: 'Territory is not assigned', error: true });
+
+                            }
                         })
                     else if (rows[0].permit === 'staff')
                     {
+                        console.log("rows", rows)
+
                         connection.query(
                             'SELECT * FROM staff WHERE `user-id` = ?',
                             [rows[0].id],
@@ -68,8 +74,18 @@ exports.login = catchAsync(async (req, res, next) =>
                                                 );
                                                 res.json({ token, user: { ...user, territory: territory } });
                                             }
+                                            else
+                                            {
+                                                res.status(401).json({ message: 'Territory is not assigned', error: true });
+
+                                            }
                                         }
                                     );
+                                }
+                                else
+                                {
+                                    res.status(401).json({ message: 'Staff collection issue, row not created', error: true });
+
                                 }
                             }
                         );

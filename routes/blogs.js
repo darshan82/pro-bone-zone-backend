@@ -22,7 +22,6 @@ router.post(
         check('author').notEmpty(),
         check('title').notEmpty(),
         check('blog_text').notEmpty(),
-        check('edit_id').isInt().notEmpty(),
     ],
     addBlog
 );

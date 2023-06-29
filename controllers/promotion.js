@@ -52,10 +52,8 @@ exports.getPromotionById = catchAsync(async (req, res, next) =>
               res.status(500).json({ error: 'Error executing event query:', error });
               return;
             }
-            console.log("eventResults", eventResults)
 
             const eventIdsWithAvailability = eventResults.map((event) => event.id);
-            console.log("eventIdsWithAvailability", eventIdsWithAvailability)
             if (eventIdsWithAvailability && eventIdsWithAvailability.length)
               connection.query(
                 `SELECT * FROM availability WHERE event_id IN (${eventIdsWithAvailability.join(
@@ -111,8 +109,6 @@ exports.getAllPromotions = catchAsync(async (req, res, next) =>
   {
     promotionQuery += ` WHERE \`territory-id\` = ${territoryId}`;
   }
-  console.log("territoryId", promotionQuery)
-
   connection.query(promotionQuery, (error, promotionResults) =>
   {
     if (error)
@@ -251,8 +247,6 @@ exports.updatePromotion = catchAsync(async (req, res, next) =>
   const sql = 'UPDATE promotion SET `territory-id` = ?, `ptype` = ?, `p-url` = ?, `event1-id` = ?, `event2-id` = ?, `event3-id` = ?, `event4-id` = ?, `edit-id` = ?, `locked` = ? WHERE `id` = ?';
 
   const values = [territoryId, ptype, pUrl, eventId1, eventId2, eventId3, eventId4, req.userData?.user?.id, locked, promotionId];
-  console.log(values);
-
   connection.query(sql, values, (error, results) =>
   {
 

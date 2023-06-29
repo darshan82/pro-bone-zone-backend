@@ -27,7 +27,6 @@ exports.addBlog = (req, res) =>
     {
         return res.status(400).json({ errors: errors.array() });
     }
-    console.log(req.userData)
     const { category, subcategory, author, title, blog_text, status } = req.body;
     const values = [category, subcategory, author, title, blog_text, req.userData?.user?.id, status];
     const connection = database.getConnection();

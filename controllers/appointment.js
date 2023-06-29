@@ -44,7 +44,6 @@ exports.addAppointments = catchAsync(async (req, res, next) =>
 
     const territoryId = results[0]['territory-id']
 
-    console.log(`Territory ${territoryId}`)
     // Step 1: Insert data into the customer table
     const customerValues = [firstName, lastName, email, phone, territoryId, description];
     const customerSql =
@@ -115,8 +114,6 @@ exports.deleteAppointment = catchAsync(async (req, res, next) =>
             return res.status(500).json({ error: 'Internal server error' });
         }
 
-        console.log("results", results)
-        console.log("results", error)
         if (results?.affectedRows === 0)
         {
             return res.status(400).json({ error: true, message: 'Record doesn not exist' });

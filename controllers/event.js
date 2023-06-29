@@ -7,7 +7,6 @@ exports.event = catchAsync(async (req, res, next) =>
 
     let query = 'SELECT * FROM event';
     const territoryId = req?.userData?.territory?.id ?? null
-    console.log(territoryId)
     if (territoryId)
     {
         query += ` WHERE territory_id = ${territoryId}`;
@@ -89,7 +88,6 @@ exports.addEvent = catchAsync(async (req, res) =>
 {
     const { territory_id, etype, edate, capacity, time_start, time_end, city, street1, street2, street3 } = req.body;
 
-    console.log(req.body)
     const connection = database.getConnection();
     const sql = 'INSERT INTO event (territory_id, etype, edate, capacity, `time-start`, `time-end`, city, street1, street2, street3, edit_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 

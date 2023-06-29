@@ -48,8 +48,6 @@ exports.login = catchAsync(async (req, res, next) =>
                         })
                     else if (rows[0].permit === 'staff')
                     {
-                        console.log("rows", rows)
-
                         connection.query(
                             'SELECT * FROM staff WHERE `user-id` = ?',
                             [rows[0].id],
@@ -154,7 +152,6 @@ exports.signup = catchAsync(async (req, res,) =>
 
             ], (error, rowz) =>
             {
-                console.log("rowz", rowz)
                 const token = jwt.sign({ email, permit }, config.jwt_secret);
 
                 if (permit === "staff")

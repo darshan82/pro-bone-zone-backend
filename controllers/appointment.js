@@ -1,6 +1,18 @@
 const catchAsync = require("../utils/catchAsync");
 const database = require('../sqlconnect');
 const { validationResult } = require("express-validator");
+const nodemailer = require('nodemailer');
+// Add your email configuration here
+const transporter = nodemailer.createTransport({
+    host: 'your_email_host',
+    port: 'your_email_port',
+    secure: true, // Set to false if you don't have a secure connection
+    auth: {
+        user: 'your_email_address',
+        pass: 'your_email_password',
+    },
+});
+
 
 exports.addAppointments = catchAsync(async (req, res, next) =>
 {
@@ -95,6 +107,25 @@ exports.addAppointments = catchAsync(async (req, res, next) =>
                     // Return success response
                     return res.status(200).json({ message: 'Data inserted successfully' });
                 });
+            });
+            const emailSubject = 'Successful Appointment Addition';
+            const emailMessage = `Dear [Recipient's Name],\n\nI hope this email finds you well. I am writing to inform you that your appointment has been successfully added to your event. We are pleased to confirm the details of your appointment:\n\n- Date: ${date}\n- Time: ${time}\n- Type: ${type}\n- Description: ${description}\n\nWe appreciate your trust in our services and are committed to ensuring a seamless experience for you. If you have any further questions or need to make any changes to your appointment, please feel free to contact our support team.\n\nThank you once again for choosing our platform. We look forward to serving you and providing a satisfactory experience.\n\nBest regards,\n[Your Name]\n[Your Title/Organization]\n[Contact Information]`;
+
+            const mailOptions = {
+                from: 'your_email_address',
+                to: email,
+                subject: emailSubject,
+                text: emailMessage,
+            };
+
+            transporter.sendMail(mailOptions, (error) =>
+            {
+                if (error)
+                {
+                    console.error('Error sending email:', error);
+                }
+                // Return success response
+                return res.status(200).json({ message: 'Data inserted successfully' });
             });
         });
     });

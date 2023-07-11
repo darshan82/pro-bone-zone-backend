@@ -58,12 +58,12 @@ exports.deleteEvent = catchAsync(async (req, res) =>
 exports.updateEvent = catchAsync(async (req, res) =>
 {
     const eventId = req.params.id;
-    const { state,territory_id, etype, edate, capacity, time_start, time_end, city, street1, street2, street3 } = req.body;
+    const { state, territory_id, etype, edate, capacity, time_start, time_end, city, street1, street2, street3 } = req.body;
 
     const connection = database.getConnection();
     const sql = 'UPDATE event SET state = ?,territory_id = ?, etype = ?, edate = ?, capacity = ?, `time-start` = ?, `time-end` = ?, city = ?, street1 = ?, street2 = ?, street3 = ?, edit_id = ? WHERE id = ?';
 
-    const values = [state,territory_id, etype, edate, capacity, time_start, time_end, city, street1, street2, street3, req.userData?.user?.id, , eventId];
+    const values = [state, territory_id, etype, edate, capacity, time_start, time_end, city, street1, street2, street3, req.userData?.user?.id, , eventId];
 
     connection.query(sql, values, (error, results) =>
     {
@@ -84,14 +84,22 @@ exports.updateEvent = catchAsync(async (req, res) =>
     });
 });
 // Add an event
+
+const timeList = [
+    "9:00 AM", "9:30 AM", "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM", "12:00 PM",
+    "12:30 PM", "1:00 PM", "1:30 PM", "2:00 PM", "2:30 PM", "3:00 PM", "3:30 PM", "4:00 PM",
+    "4:30 PM", "5:00 PM", "5:30 PM", "6:00 PM", "6:30 PM", "7:00 PM", "7:30 PM", "8:00 PM",
+    "8:30 PM", "9:00 PM", "9:30 PM", "10:00 PM"
+];
+
 exports.addEvent = catchAsync(async (req, res) =>
 {
-    const { state,territory_id, etype, edate, capacity, time_start, time_end, city, street1, street2, street3 } = req.body;
+    const { state, territory_id, etype, edate, capacity, time_start, time_end, city, street1, street2, street3 } = req.body;
 
     const connection = database.getConnection();
-    const sql = 'INSERT INTO event (state,territory_id, etype, edate, capacity, `time-start`, `time-end`, city, street1, street2, street3, edit_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    const sql = 'INSERT INTO event (state, territory_id, etype, edate, capacity, `time-start`, `time-end`, city, street1, street2, street3, edit_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
-    const values = [state,territory_id, etype, edate, capacity, time_start, time_end, city, street1, street2, street3, req.userData?.user?.id];
+    const values = [state, territory_id, etype, edate, capacity, time_start, time_end, city, street1, street2, street3, req.userData?.user?.id];
 
     connection.query(sql, values, (error, results) =>
     {
@@ -101,10 +109,50 @@ exports.addEvent = catchAsync(async (req, res) =>
             return res.status(500).json({ error: 'Internal server error' });
         }
 
-        // Return success response
-        return res.status(200).json({ message: 'Event added successfully' });
+        const eventId = results.insertId; // Get the auto-incremented id of the inserted event
+
+        const filterTimeRange = (arr, startTime, endTime) =>
+        {
+            let isWithinRange = false;
+            return arr.filter(time =>
+            {
+                if (time === startTime)
+                {
+                    isWithinRange = true;
+                }
+                if (isWithinRange)
+                {
+                    if (time === endTime)
+                    {
+                        isWithinRange = false;
+                    }
+                    return true;
+                }
+                return false;
+            });
+        };
+        const filteredTimeList = filterTimeRange(timeList, time_start, time_end);
+        let availabilityValues = filteredTimeList.map(timeslot => [eventId, timeslot, capacity]);
+
+        const availabilitySql = 'INSERT INTO availability (event_id, timeslot, seats) VALUES ?';
+
+        console.log(availabilitySql)
+        console.log(availabilityValues)
+
+        connection.query(availabilitySql, [availabilityValues], (availabilityError) =>
+        {
+            if (availabilityError)
+            {
+                console.error('Error inserting data into availability table:', availabilityError);
+                return res.status(500).json({ error: 'Internal server error' });
+            }
+
+            // Return success response
+            return res.status(200).json({ message: 'Event added successfully' });
+        });
     });
 });
+
 exports.getEventById = catchAsync(async (req, res, next) =>
 {
     const eventId = req.params.id;

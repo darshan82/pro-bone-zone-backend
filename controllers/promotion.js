@@ -313,7 +313,6 @@ exports.addPromotion = catchAsync(async (req, res, next) =>
 
     // Update pUrl with the insertedId
     const updatedPUrl = `${pUrl}/${insertedId}`;
-    console.log(updatedPUrl);
     // Update the promotion row with the updatedPUrl
     const updateSql = 'UPDATE promotion SET `p-url` = ? WHERE id = ?';
     connection.query(updateSql, [updatedPUrl, insertedId], (updateError) => {

@@ -165,7 +165,6 @@ exports.getTerritoryById = catchAsync(async (req, res, next) =>
 
             // Return the territory with licensee information
             const territory = results[0];
-            console.log(territory)
             res.json(territory);
         });
     }
@@ -181,7 +180,7 @@ exports.query = (req, res) =>
 {
     const connection = database.getConnection();
 
-    const query = "UPDATE promotion SET attendees = 0 WHERE attendees IS NULL";
+    const query = "ALTER TABLE availability MODIFY COLUMN id INT UNSIGNED AUTO_INCREMENT";
 
     connection.query(query, (error, result) =>
     {

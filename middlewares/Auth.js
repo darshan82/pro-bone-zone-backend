@@ -32,7 +32,6 @@ exports.verifyTheToken = (req, res, next) =>
       });
     }
 
-    console.log("req.userData", data)
     req.userData = data;
     next();
   });

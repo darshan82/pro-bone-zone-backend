@@ -309,6 +309,23 @@ exports.addPromotion = catchAsync(async (req, res, next) =>
       return res.status(500).json({ error: 'Internal server error' });
     }
 
+    const insertedId = results.insertId; // Get the auto-incremented id of the inserted row
+
+    // Update pUrl with the insertedId
+    const updatedPUrl = `${pUrl}/${insertedId}`;
+    
+    // Update the promotion row with the updatedPUrl
+    const updateSql = 'UPDATE promotion SET `p-url` = ? WHERE id = ?';
+    connection.query(updateSql, [updatedPUrl, insertedId], (updateError) => {
+      if (updateError) {
+        console.error('Error updating promotion:', updateError);
+        return res.status(500).json({ error: 'Internal server error' });
+      }
+
+      // Return success response
+      return res.status(200).json({ message: 'Promotion added successfully' });
+    });
+
     // Return success response
     return res.status(200).json({ message: 'Promotion added successfully' });
   });

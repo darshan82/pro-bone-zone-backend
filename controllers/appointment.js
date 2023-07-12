@@ -64,9 +64,9 @@ exports.addAppointments = catchAsync(async (req, res, next) => {
         const customerId = customerResult.insertId;
 
         // Step 2: Insert data into the appointment table
-        const appointmentValues = [eventId, customerId, time];
+        const appointmentValues = [eventId, customerId, time,type];
         const appointmentSql =
-            'INSERT INTO appointment (`event-id`, `customer-id`, `timeslot`) VALUES (?, ?, ?)';
+            'INSERT INTO appointment (`event-id`, `customer-id`, `timeslot`,`interest`) VALUES (?, ?, ?, ?)';
 
         connection.query(appointmentSql, appointmentValues, (error, appointmentResult) => {
             if (error) {

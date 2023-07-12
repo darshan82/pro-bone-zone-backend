@@ -20,11 +20,18 @@ exports.login = catchAsync(async (req, res, next) =>
 
         try
         {
-            connection.query('SELECT * FROM user WHERE email = ? AND pass = ?', [email, password], (error, rows) =>
+            console.log("email", email.trim())
+            console.log("email", password)
+
+            connection.query('SELECT * FROM user WHERE email = ? AND pass = ?', [email.trim(), password.trim()], (error, rows) =>
             {
                 // Query the database to check if user exists
 
                 // Check if a matching user is found
+                console.log("email", rows)
+                console.log("email", error)
+
+
                 if (rows && rows.length === 1)
                 {
                     if (rows[0].permit === 'licensee')

@@ -14,11 +14,9 @@ const transporter = nodemailer.createTransport({
 });
 
 
-exports.addAppointments = catchAsync(async (req, res, next) =>
-{
+exports.addAppointments = catchAsync(async (req, res, next) => {
     const errors = validationResult(req);
-    if (!errors.isEmpty())
-    {
+    if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
 
@@ -38,33 +36,27 @@ exports.addAppointments = catchAsync(async (req, res, next) =>
 
     const connection = database.getConnection();
 
-    const getTerritoryIdQuery = 'SELECT \`territory-id\` FROM promotion WHERE id = ?';
+    const getTerritoryIdQuery = 'SELECT `territory-id` FROM promotion WHERE id = ?';
 
-    const results = await new Promise((resolve, reject) =>
-    {
-        connection.query(getTerritoryIdQuery, [promotionId], (error, results) =>
-        {
-            if (error)
-            {
+    const results = await new Promise((resolve, reject) => {
+        connection.query(getTerritoryIdQuery, [promotionId], (error, results) => {
+            if (error) {
                 reject(error);
-            } else
-            {
+            } else {
                 resolve(results);
             }
         });
     });
 
-    const territoryId = results[0]['territory-id']
+    const territoryId = results[0]['territory-id'];
 
     // Step 1: Insert data into the customer table
     const customerValues = [firstName, lastName, email, phone, territoryId, description];
     const customerSql =
         'INSERT INTO customer (`name-first`, `name-last`, `email`, `phone`,`territory_id`,`notes`) VALUES (?, ?, ?, ?,?,?)';
 
-    connection.query(customerSql, customerValues, (error, customerResult) =>
-    {
-        if (error)
-        {
+    connection.query(customerSql, customerValues, (error, customerResult) => {
+        if (error) {
             console.error('Error inserting data into customer table:', error);
             return res.status(500).json({ error: 'Internal server error' + error });
         }
@@ -76,39 +68,32 @@ exports.addAppointments = catchAsync(async (req, res, next) =>
         const appointmentSql =
             'INSERT INTO appointment (`event-id`, `customer-id`, `timeslot`) VALUES (?, ?, ?)';
 
-        connection.query(appointmentSql, appointmentValues, (error, appointmentResult) =>
-        {
-            if (error)
-            {
+        connection.query(appointmentSql, appointmentValues, (error, appointmentResult) => {
+            if (error) {
                 console.error('Error inserting data into appointment table:', error);
                 return res.status(500).json({ error: 'Internal server error' });
             }
 
             // Step 3: Update attendees in the promotion table
             const updatePromotionSql = 'UPDATE promotion SET attendees = attendees + 1 WHERE id = ?';
-            connection.query(updatePromotionSql, [promotionId], (error) =>
-            {
-                if (error)
-                {
+            connection.query(updatePromotionSql, [promotionId], (error) => {
+                if (error) {
                     console.error('Error updating attendees in the promotion table:', error);
                     return res.status(500).json({ error: 'Internal server error' });
                 }
 
                 // Step 4: Update attendees in the event table
                 const updateEventSql = 'UPDATE event SET attendees = attendees + 1 WHERE id = ?';
-                connection.query(updateEventSql, [eventId], (error) =>
-                {
-                    if (error)
-                    {
+                connection.query(updateEventSql, [eventId], (error) => {
+                    if (error) {
                         console.error('Error updating attendees in the event table:', error);
                         return res.status(500).json({ error: 'Internal server error' });
                     }
 
+                    // Step 5: Update seats in the availability table
                     const updateAvailabilitySql = 'UPDATE availability SET seats = seats - 1 WHERE event_id = ? AND timeslot = ?';
-                    connection.query(updateAvailabilitySql, [eventId, time], (error) =>
-                    {
-                        if (error)
-                        {
+                    connection.query(updateAvailabilitySql, [eventId, time], (error) => {
+                        if (error) {
                             console.error('Error updating availability seats:', error);
                             return res.status(500).json({ error: 'Internal server error' });
                         }
@@ -116,34 +101,12 @@ exports.addAppointments = catchAsync(async (req, res, next) =>
                         // Return success response
                         return res.status(200).json({ message: 'Data inserted successfully' });
                     });
-                    // Return success response
-                    return res.status(200).json({ message: 'Data inserted successfully' });
                 });
-            });
-            return res.status(200).json({ message: 'Data inserted successfully' });
-            return
-            const emailSubject = 'Successful Appointment Addition';
-            const emailMessage = `Dear [Recipient's Name],\n\nI hope this email finds you well. I am writing to inform you that your appointment has been successfully added to your event. We are pleased to confirm the details of your appointment:\n\n- Date: ${date}\n- Time: ${time}\n- Type: ${type}\n- Description: ${description}\n\nWe appreciate your trust in our services and are committed to ensuring a seamless experience for you. If you have any further questions or need to make any changes to your appointment, please feel free to contact our support team.\n\nThank you once again for choosing our platform. We look forward to serving you and providing a satisfactory experience.\n\nBest regards,\n[Your Name]\n[Your Title/Organization]\n[Contact Information]`;
-
-            const mailOptions = {
-                from: 'your_email_address',
-                to: email,
-                subject: emailSubject,
-                text: emailMessage,
-            };
-
-            transporter.sendMail(mailOptions, (error) =>
-            {
-                if (error)
-                {
-                    // console.error('Error sending email:', error);
-                }
-                // Return success response
-                return res.status(200).json({ message: 'Data inserted successfully' });
             });
         });
     });
 });
+
 
 
 exports.deleteAppointment = catchAsync(async (req, res, next) =>

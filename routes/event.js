@@ -13,7 +13,6 @@ router.get('/:id', controller.getEventById);
 
 // Update an event
 router.put('/:id', [
-    check('territory_id').isInt().notEmpty(),
     check('etype').notEmpty(),
     check('edate').notEmpty(),
     check('capacity').isInt().notEmpty(),

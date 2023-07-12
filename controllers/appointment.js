@@ -104,6 +104,18 @@ exports.addAppointments = catchAsync(async (req, res, next) =>
                         return res.status(500).json({ error: 'Internal server error' });
                     }
 
+                    const updateAvailabilitySql = 'UPDATE availability SET seats = seats - 1 WHERE event_id = ? AND timeslot = ?';
+                    connection.query(updateAvailabilitySql, [eventId, time], (error) =>
+                    {
+                        if (error)
+                        {
+                            console.error('Error updating availability seats:', error);
+                            return res.status(500).json({ error: 'Internal server error' });
+                        }
+
+                        // Return success response
+                        return res.status(200).json({ message: 'Data inserted successfully' });
+                    });
                     // Return success response
                     return res.status(200).json({ message: 'Data inserted successfully' });
                 });

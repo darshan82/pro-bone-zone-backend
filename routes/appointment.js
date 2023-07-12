@@ -29,6 +29,7 @@ router.post('/add',
     ]
     , controller.addAppointments);
 
+console.log("statf4@test.com")
 router.delete('/delete/:id', [
     param('id').notEmpty().withMessage('Appointment ID is required'),
 ],

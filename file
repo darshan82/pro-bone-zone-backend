@@ -52,7 +52,6 @@ INSERT INTO `appointment` (`id`, `event-id`, `customer-id`, `timeslot`) VALUES
 CREATE TABLE `availability` (
   `id` int(11) UNSIGNED NOT NULL,
   `event_id` int(11) UNSIGNED NOT NULL,
-  `timeslot` varchar(20) NOT NULL,
   `seats` tinyint(2) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

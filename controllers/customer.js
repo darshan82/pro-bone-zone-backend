@@ -181,13 +181,20 @@ exports.getCustomerList = async (req, res) =>
     try
     {
         const connection = database.getConnection();
-        let sql = 'SELECT * FROM customer';
+        let sql = `
+        SELECT a.*, c.*, a.id AS appointment_id, a.timeslot AS appointment_timeslot, av.event_id, GROUP_CONCAT(av.timeslot) AS availability_timeslots
+        FROM customer AS c
+        LEFT JOIN appointment AS a ON c.id = a.\`customer-id\`
+        LEFT JOIN availability AS av ON a.\`event-id\` = av.event_id
+      `;
 
         // Check if territory_id is provided
         if (territory_id)
         {
-            sql += ' WHERE territory_id = ?';
+            sql += ' WHERE c.territory_id = ?';
         }
+
+        sql += ' GROUP BY c.id, a.id, av.event_id';
 
         connection.query(sql, [territory_id], (error, results) =>
         {
@@ -205,8 +212,39 @@ exports.getCustomerList = async (req, res) =>
             const uniqueEmails = {};
             const customers = [];
 
-            for (const customer of results)
+            for (const result of results)
             {
+                const customer = {
+                    id: result.id,
+                    territory_id: result.territory_id,
+                    'name-first': result['name-first'],
+                    'name-last': result['name-last'],
+                    email: result.email,
+                    phone: result.phone,
+                    notes: result.notes,
+                    updated: result.updated,
+                    'edit-id': result['edit-id'],
+                    appointments: [],
+                    timeslots: []
+                };
+
+                if (result.appointment_id)
+                {
+                    const appointment = {
+                        ...result,
+                        id: result.appointment_id,
+                        'customer-id': result.id,
+                        timeslot: result.appointment_timeslot
+                    };
+                    customer.appointments.push(appointment);
+                }
+
+                if (result.availability_timeslots)
+                {
+                    const timeslots = result.availability_timeslots.split(',');
+                    customer.timeslots.push(...timeslots);
+                }
+
                 if (!customer.email || uniqueEmails[customer.email])
                 {
                     continue;

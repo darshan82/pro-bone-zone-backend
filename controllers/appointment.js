@@ -66,7 +66,7 @@ exports.addAppointments = catchAsync(async (req, res, next) => {
         // Step 2: Insert data into the appointment table
         const appointmentValues = [eventId, customerId, time,type];
         const appointmentSql =
-            'INSERT INTO appointment (`event-id`, `customer-id`, `timeslot`,`interest`) VALUES (?, ?, ?, ?)';
+            'INSERT INTO appointment (`event-id`, `customer-id`, `timeslot`,`type`) VALUES (?, ?, ?, ?)';
 
         connection.query(appointmentSql, appointmentValues, (error, appointmentResult) => {
             if (error) {
@@ -147,7 +147,7 @@ exports.getAppointmentsByEventId = async (req, res) =>
         const connection = database.getConnection();
 
         const sql = `
-        SELECT a.*, e.*, c.*, GROUP_CONCAT(av.timeslot) AS timeslots
+        SELECT e.*, c.*, a.*, GROUP_CONCAT(av.timeslot) AS timeslots
         FROM appointment AS a
         INNER JOIN event AS e ON a.\`event-id\` = e.id
         INNER JOIN customer AS c ON a.\`customer-id\` = c.id

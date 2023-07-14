@@ -139,9 +139,10 @@ exports.addEvent = catchAsync(async (req, res) =>
         else
         {
             filteredTimeList.pop()
-            availabilityValues = filteredTimeList.map(timeslot => [eventId, timeslot, capacity]) }
+            availabilityValues = filteredTimeList.map(timeslot => [eventId, timeslot, capacity])
+        }
 
-
+        console.log("darhsan")
         const availabilitySql = 'INSERT INTO availability (event_id, timeslot, seats) VALUES ?';
 
 

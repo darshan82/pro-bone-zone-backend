@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const { check } = require('express-validator');
+const { verifyTheToken } = require('../middlewares/Auth');
+
 const {
     getAllBlogs,
     addBlog,
@@ -10,11 +12,14 @@ const {
 } = require('../controllers/blogs');
 
 // Get all blogs
-router.get('/', getAllBlogs);
+router.get('/',
+verifyTheToken,
+getAllBlogs);
 
 // Add a new blog
 router.post(
     '/add',
+    verifyTheToken,
     [
         // Validation rules using express-validator
         check('category').notEmpty(),
@@ -29,6 +34,7 @@ router.post(
 // Update a blog
 router.put(
     '/update/:id',
+    verifyTheToken,
     [
         // Validation rules using express-validator
         check('category').notEmpty(),
@@ -41,7 +47,7 @@ router.put(
 );
 
 // Delete a blog
-router.delete('/delete/:id', deleteBlog);
+router.delete('/delete/:id', verifyTheToken,deleteBlog);
 
 // Get a blog by ID
 router.get('/:id', getBlogById);

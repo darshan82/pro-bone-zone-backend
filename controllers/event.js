@@ -133,7 +133,12 @@ exports.addEvent = catchAsync(async (req, res) =>
             });
         };
         const filteredTimeList = filterTimeRange(timeList, time_start, time_end);
-        let availabilityValues = filteredTimeList.map(timeslot => [eventId, timeslot, capacity]);
+        let availabilityValues
+        if (filteredTimeList.length == 1 || filteredTimeList.length === 0)
+            availabilityValues = filteredTimeList.map(timeslot => [eventId, timeslot, capacity])
+        else
+            availabilityValues = filteredTimeList.pop().map(timeslot => [eventId, timeslot, capacity])
+
 
         const availabilitySql = 'INSERT INTO availability (event_id, timeslot, seats) VALUES ?';
 

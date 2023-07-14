@@ -35,7 +35,7 @@ app.use("/sponsor", verifyTheToken, sponsor);
 app.use("/resource", verifyTheToken, resource);
 app.use("/user", user);
 app.use("/territory", verifyTheToken, territory);
-app.use("/blogs", verifyTheToken, blogs);
+app.use("/blogs", blogs);
 
 app.get("/global/states", (req, res) =>
 {

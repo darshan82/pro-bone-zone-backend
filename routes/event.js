@@ -25,7 +25,7 @@ router.put('/:id', [
     check('street3'),
 ], controller.updateEvent);
 
-// Add a new event
+// Add a new events
 router.post('/', [
     body('territory_id').isInt().notEmpty(),
     body('etype').notEmpty(),

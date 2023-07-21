@@ -25,17 +25,7 @@ app.use(morgan("dev"));
 app.use(cors());
 app.use(express.json());
 
-app.use("/appointment", appointment);
-app.use("/customer", verifyTheToken, customer);
-app.use("/event", verifyTheToken, event);
-app.use("/promotion", promotion);
 
-app.use("/staff", verifyTheToken, staff);
-app.use("/sponsor", verifyTheToken, sponsor);
-app.use("/resource", verifyTheToken, resource);
-app.use("/user", user);
-app.use("/territory", verifyTheToken, territory);
-app.use("/blogs", blogs);
 
 app.get("/global/states", (req, res) =>
 {

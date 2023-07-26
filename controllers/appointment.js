@@ -2,7 +2,6 @@ const catchAsync = require("../utils/catchAsync");
 const database = require('../sqlconnect');
 const { validationResult } = require("express-validator");
 const nodemailer = require('nodemailer');
-// Add your email configuration here
 const transporter = nodemailer.createTransport({
     host: 'your_email_host',
     port: 'your_email_port',

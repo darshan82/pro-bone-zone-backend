@@ -1,3 +1,4 @@
+// I left the configration because i already change the environment completely
 var config = {
 
     PORT: 3000,

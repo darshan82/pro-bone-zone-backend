@@ -1,7 +1,7 @@
 {
   "name": "pro-bone-zone-backend",
   "version": "1.0.0",
-  "description": "REST API for Pro Bone Zone \u2014 appointments, events, sponsors, territories and licensee management (Node.js, Express, MySQL, JWT).",
+  "description": "REST API for Pro Bono Zone \u2014 appointments, events, sponsors, territories and licensee management (Node.js, Express, MySQL, JWT).",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

@@ -1,6 +1,6 @@
-# Pro Bone Zone — Backend API
+# Pro Bono Zone — Backend API
 
-REST API powering **Pro Bone Zone**, a platform for organising pro bono legal clinics. It handles customer appointments, events, sponsors and promotions, territories, resources, blogs, and multi-role user management (admin / licensee / staff).
+REST API powering **Pro Bono Zone**, a platform for organising pro bono legal clinics. It handles customer appointments, events, sponsors and promotions, territories, resources, blogs, and multi-role user management (admin / licensee / staff).
 
 Frontend: [Pro-Bone-Zone](https://github.com/darshan82/Pro-Bone-Zone)
 

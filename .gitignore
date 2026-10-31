@@ -23,3 +23,8 @@ build
 *.njsproj
 *.sln
 *.sw?
+
+# Environment & uploads
+.env
+uploads/*
+!uploads/.gitkeep

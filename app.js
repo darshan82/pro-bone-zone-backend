@@ -90,6 +90,18 @@ app.post('/upload', upload.single('file'), (req, res) =>
     });
 });
 
+// API routes
+app.use('/appointment', appointment);
+app.use('/customer', customer);
+app.use('/event', event);
+app.use('/promotion', promotion);
+app.use('/resource', resource);
+app.use('/staff', staff);
+app.use('/sponsor', sponsor);
+app.use('/territory', territory);
+app.use('/user', user);
+app.use('/blogs', blogs);
+
 // 404 Error handling middleware
 app.use((req, res, next) =>
 {

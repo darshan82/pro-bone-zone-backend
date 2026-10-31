@@ -2,13 +2,14 @@ const catchAsync = require("../utils/catchAsync");
 const database = require('../sqlconnect');
 const { validationResult } = require("express-validator");
 const nodemailer = require('nodemailer');
+const config = require('../config');
 const transporter = nodemailer.createTransport({
-    host: 'your_email_host',
-    port: 'your_email_port',
+    host: config.smtp.host,
+    port: config.smtp.port,
     secure: true, // Set to false if you don't have a secure connection
     auth: {
-        user: 'your_email_address',
-        pass: 'your_email_password',
+        user: config.smtp.user,
+        pass: config.smtp.pass,
     },
 });
 
